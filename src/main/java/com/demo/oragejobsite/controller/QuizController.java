@@ -16,7 +16,7 @@ import com.demo.oragejobsite.dao.QuizQuestionRepository;
 import com.demo.oragejobsite.entity.QuizQuestion;
 
 @RestController
-@CrossOrigin(origins="https://oragetechui.vercel.app")
+@CrossOrigin(origins="http://159.203.168.51")
 public class QuizController {
 //    private final QuizQuestionService quizQuestionService;
     @Autowired
@@ -32,7 +32,7 @@ public class QuizController {
 //        return ResponseEntity.ok(questions);
 //    }
     
-	@CrossOrigin(origins="https://oragetechui.vercel.app")
+	@CrossOrigin(origins="http://159.203.168.51")
     @PostMapping("/add")
     public ResponseEntity<String> addQuestion(@RequestBody QuizQuestion question) {
         try {
@@ -43,13 +43,13 @@ public class QuizController {
         }
     }
 	
-	@CrossOrigin(origins="https://oragetechui.vercel.app")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@GetMapping("/fetchquestion")
 	public List<QuizQuestion> fetchquestion(){
 		return questionRepository.findAll();
 	}
 	
-	@CrossOrigin(origins = "https://oragetechui.vercel.app")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/deletequestion")
 	public void deleteQuestionById(@RequestBody Map<String, Long> request) {
 	    Long id = request.get("id");

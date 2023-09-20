@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.UserDao;
 import com.demo.oragejobsite.entity.User;
 
-@CrossOrigin(origins="https://oragetechui.vercel.app")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class UserController {
 
@@ -23,7 +23,7 @@ public class UserController {
 	private UserDao ud;
 	
 	
-	@CrossOrigin(origins="https://oragetechui.vercel.app")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/insertusermail")
 	public User insertusermail(@RequestBody User c1)
 	{
@@ -31,7 +31,7 @@ public class UserController {
 		
 	}
 	
-	@CrossOrigin(origins="https://oragetechui.vercel.app")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/logincheck")
 	public User logincheck(@RequestBody User c12, HttpServletResponse response)
 	{
@@ -74,7 +74,7 @@ public class UserController {
 	
 	
 	
-	@CrossOrigin(origins="https://oragetechui.vercel.app")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@GetMapping("/fetchuser")
 	public List<User> fetchuser(){
 		return ud.findAll();

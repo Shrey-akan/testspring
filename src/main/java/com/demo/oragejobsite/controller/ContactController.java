@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.ConatctDao;
 import com.demo.oragejobsite.entity.Contact;
 
-@CrossOrigin(origins="https://oragetechui.vercel.app")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class ContactController {
 	@Autowired
 	private ConatctDao cd;
 	
 	
-	@CrossOrigin(origins="https://oragetechui.vercel.app")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/insertcontact")
 	public Contact insertcontact(@RequestBody Contact contact)
 	{
@@ -29,7 +29,7 @@ public class ContactController {
 	
 	
 	
-	@CrossOrigin(origins="https://oragetechui.vercel.app")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@GetMapping("/fetchcontact")
 	public List<Contact> fetchcontact(){
 		return cd.findAll();
