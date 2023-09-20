@@ -16,14 +16,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.EmployerDao;
 import com.demo.oragejobsite.entity.Employer;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://oragetechui.vercel.app")
 @RestController
 public class EmployerController {
 	@Autowired
 	private EmployerDao ed;
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://oragetechui.vercel.app")
 	@PostMapping("/insertemployer")
 	public Employer insertemployer(@RequestBody Employer emp)
 	{
@@ -33,7 +33,7 @@ public class EmployerController {
 	}
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "https://oragetechui.vercel.app")
 	@PostMapping("/insertemployeremail")
 	public Employer insertemployeremail(@RequestBody Map<String, String> requestBody) {
 	    String empmailid = requestBody.get("empmailid");
@@ -55,7 +55,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://oragetechui.vercel.app")
 	@PostMapping("/logincheckemp")
 	public Employer logincheckemp(@RequestBody Employer e12, HttpServletResponse response)
 	{
@@ -104,7 +104,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://oragetechui.vercel.app")
 	@GetMapping("/fetchemployer")
 	public List<Employer> fetchemployer(){
 		return ed.findAll();
