@@ -116,11 +116,12 @@ public class EmployerController {
 	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/updateEmployee")
 	public Employer updateEmployee(@RequestBody Employer s1) {
-		 Optional<Employer> existingEmployer = ed.findById(s1.getEmpid());
+//		 Optional<Employer> existingEmployer = ed.findById(s1.getEmpid());
+		Optional<Employer> existingEmployerOptional = ed.findByEmppass(s1.getEmppass());
 
-		    if (existingEmployer.isPresent()) {
+		if (existingEmployerOptional.isPresent()) {
 		        // If it exists, update the existing record
-		        Employer employerToUpdate = existingEmployer.get();
+		        Employer employerToUpdate = existingEmployerOptional.get();
 		        // Update the fields you want to change
 		        employerToUpdate.setEmpfname(s1.getEmpfname());
 		        employerToUpdate.setEmplname(s1.getEmplname());
