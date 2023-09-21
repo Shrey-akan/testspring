@@ -113,32 +113,32 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/updateEmployee")
-	public Employer updateEmployee(@RequestBody Employer s1) {
-//		 Optional<Employer> existingEmployer = ed.findById(s1.getEmpid());
-		Optional<Employer> existingEmployerOptional = ed.findByEmppass(s1.getEmppass());
+	public Employer updateEmployee(@RequestBody Employer updatedEmployer) {
+	    // Check if an employer with the provided emppass exists
+	    Optional<Employer> existingEmployerOptional = ed.findByEmppass(updatedEmployer.getEmppass());
 
-		if (existingEmployerOptional.isPresent()) {
-		        // If it exists, update the existing record
-		        Employer employerToUpdate = existingEmployerOptional.get();
-		        // Update the fields you want to change
-		        employerToUpdate.setEmpfname(s1.getEmpfname());
-		        employerToUpdate.setEmplname(s1.getEmplname());
-		        employerToUpdate.setEmpcompany(s1.getEmpcompany());
-		        
-		        employerToUpdate.setEmppass(s1.getEmppass());
-		        employerToUpdate.setEmpphone(s1.getEmpphone());
-		        employerToUpdate.setEmpcountry(s1.getEmpcountry());
-		        employerToUpdate.setEmpstate(s1.getEmpstate());
-		        employerToUpdate.setEmpcity(s1.getEmpcity());
-		        employerToUpdate.setDescriptionemp(s1.getDescriptionemp());
-		        // Update other fields as needed
-		        // Save the updated record
-		        return ed.save(employerToUpdate);
-		    } else {
-		        // If it doesn't exist, create a new record
-		        return ed.save(s1);
-		    }
+	    if (existingEmployerOptional.isPresent()) {
+	        // If it exists, update the existing record
+	        Employer existingEmployer = existingEmployerOptional.get();
+	        
+	        // Update the fields you want to change
+	        existingEmployer.setEmpfname(updatedEmployer.getEmpfname());
+	        existingEmployer.setEmplname(updatedEmployer.getEmplname());
+	        existingEmployer.setEmpcompany(updatedEmployer.getEmpcompany());
+	        existingEmployer.setEmpphone(updatedEmployer.getEmpphone());
+	        existingEmployer.setEmpcountry(updatedEmployer.getEmpcountry());
+	        existingEmployer.setEmpstate(updatedEmployer.getEmpstate());
+	        existingEmployer.setEmpcity(updatedEmployer.getEmpcity());
+	        existingEmployer.setDescriptionemp(updatedEmployer.getDescriptionemp());
+	        
+	        // Save the updated record
+	        return ed.save(existingEmployer);
+	    } else {
+	        // If it doesn't exist, create a new record
+	        return ed.save(updatedEmployer);
+	    }
 	}
+
 }
