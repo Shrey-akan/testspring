@@ -2,6 +2,7 @@ package com.demo.oragejobsite.controller;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
@@ -115,6 +116,28 @@ public class EmployerController {
 	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/updateEmployee")
 	public Employer updateEmployee(@RequestBody Employer s1) {
-		return ed.save(s1);
+		 Optional<Employer> existingEmployer = ed.findById(s1.getEmpid());
+
+		    if (existingEmployer.isPresent()) {
+		        // If it exists, update the existing record
+		        Employer employerToUpdate = existingEmployer.get();
+		        // Update the fields you want to change
+		        employerToUpdate.setEmpfname(s1.getEmpfname());
+		        employerToUpdate.setEmplname(s1.getEmplname());
+		        employerToUpdate.setEmpcompany(s1.getEmpcompany());
+		        
+		        employerToUpdate.setEmppass(s1.getEmppass());
+		        employerToUpdate.setEmpphone(s1.getEmpphone());
+		        employerToUpdate.setEmpcountry(s1.getEmpcountry());
+		        employerToUpdate.setEmpstate(s1.getEmpstate());
+		        employerToUpdate.setEmpcity(s1.getEmpcity());
+		        employerToUpdate.setDescriptionemp(s1.getDescriptionemp());
+		        // Update other fields as needed
+		        // Save the updated record
+		        return ed.save(employerToUpdate);
+		    } else {
+		        // If it doesn't exist, create a new record
+		        return ed.save(s1);
+		    }
 	}
 }
