@@ -117,7 +117,7 @@ public class EmployerController {
 	@PostMapping("/updateEmployee")
 	public Employer updateEmployee(@RequestBody Employer updatedEmployer) {
 	    // Check if an employer with the provided emppass exists
-	    Optional<Employer> existingEmployerOptional = ed.findByEmppass(updatedEmployer.getEmppass());
+	    Optional<Employer> existingEmployerOptional = ed.findById(updatedEmployer.getEmpid());
 
 	    if (existingEmployerOptional.isPresent()) {
 	        // If it exists, update the existing record
