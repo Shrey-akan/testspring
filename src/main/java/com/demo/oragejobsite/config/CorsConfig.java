@@ -13,10 +13,8 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
+                registry.addMapping("*")
                         .allowedOrigins("http://159.203.168.51") // Update with your Angular app's URL
-                        .allowedMethods("GET", "POST", "PUT", "DELETE")
-                        .allowedHeaders("*")
                         .allowCredentials(true);
             }
         };

@@ -109,4 +109,12 @@ public class EmployerController {
 	public List<Employer> fetchemployer(){
 		return ed.findAll();
 	}
+	
+	
+	
+	@CrossOrigin(origins="http://localhost:4200")
+	@PostMapping("/updateEmployee")
+	public Employer updateEmployee(@RequestBody Employer s1) {
+		return ed.save(s1);
+	}
 }
