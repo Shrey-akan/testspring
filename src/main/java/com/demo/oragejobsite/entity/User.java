@@ -9,7 +9,7 @@ import javax.persistence.Id;
 public class User {
 @Id
 @GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long uid;
+private int uid;
    private String userName;
    private String userFirstName;
    private String userLastName;
@@ -20,13 +20,16 @@ private Long uid;
    private String usercountry;
    private String userstate;
    private String usercity;
+   private boolean verified;
 public User() {
 	super();
 	// TODO Auto-generated constructor stub
 }
-public User(Long uid, String userName, String userFirstName, String userLastName, String userPassword,
-		String companyuser, String websiteuser, String userphone, String usercountry, String userstate,
-		String usercity) {
+
+
+public User(int uid, String userName, String userFirstName, String userLastName, String userPassword,
+		String companyuser, String websiteuser, String userphone, String usercountry, String userstate, String usercity,
+		boolean verified) {
 	super();
 	this.uid = uid;
 	this.userName = userName;
@@ -39,11 +42,16 @@ public User(Long uid, String userName, String userFirstName, String userLastName
 	this.usercountry = usercountry;
 	this.userstate = userstate;
 	this.usercity = usercity;
+	this.verified = verified;
 }
-public Long getUid() {
+
+
+
+public int getUid() {
 	return uid;
 }
-public void setUid(Long uid) {
+
+public void setUid(int uid) {
 	this.uid = uid;
 }
 public String getUserName() {
@@ -106,7 +114,18 @@ public String getUsercity() {
 public void setUsercity(String usercity) {
 	this.usercity = usercity;
 }
-   
 
+
+
+public boolean isVerified() {
+	return verified;
+}
+
+
+
+public void setVerified(boolean verified) {
+	this.verified = verified;
+}
+  
 }
 

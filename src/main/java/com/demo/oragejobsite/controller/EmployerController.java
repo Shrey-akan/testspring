@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.EmployerDao;
 import com.demo.oragejobsite.entity.Employer;
 
-@CrossOrigin(origins="http://159.203.168.51")
+@CrossOrigin(origins="https://job4jobless.com")
 @RestController
 public class EmployerController {
 	@Autowired
 	private EmployerDao ed;
 	
 	
-	@CrossOrigin(origins="http://159.203.168.51")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/insertemployer")
 	public Employer insertemployer(@RequestBody Employer emp)
 	{
@@ -34,7 +34,7 @@ public class EmployerController {
 	}
 	
 	
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "https://job4jobless.com")
 	@PostMapping("/insertemployeremail")
 	public Employer insertemployeremail(@RequestBody Map<String, String> requestBody) {
 	    String empmailid = requestBody.get("empmailid");
@@ -56,7 +56,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins="http://159.203.168.51")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/logincheckemp")
 	public Employer logincheckemp(@RequestBody Employer e12, HttpServletResponse response)
 	{
@@ -98,14 +98,14 @@ public class EmployerController {
 			        	return u1; // Email already exists
 			        }
 			    }
-			return null;
+			return null;		
 		  
 //		return new Employer();
 	}
 	
 	
 	
-	@CrossOrigin(origins="http://159.203.168.51")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchemployer")
 	public List<Employer> fetchemployer(){
 		return ed.findAll();
@@ -113,7 +113,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins="http://159.203.168.51")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/updateEmployee")
 	public Employer updateEmployee(@RequestBody Employer updatedEmployer) {
 	    // Check if an employer with the provided emppass exists
@@ -121,20 +121,20 @@ public class EmployerController {
 
 	    if (existingEmployerOptional.isPresent()) {
 	        // If it exists, update the existing record
-	        Employer existingEmployer = existingEmployerOptional.get();
+	        Employer existingUser = existingEmployerOptional.get();
 	        
 	        // Update the fields you want to change
-	        existingEmployer.setEmpfname(updatedEmployer.getEmpfname());
-	        existingEmployer.setEmplname(updatedEmployer.getEmplname());
-	        existingEmployer.setEmpcompany(updatedEmployer.getEmpcompany());
-	        existingEmployer.setEmpphone(updatedEmployer.getEmpphone());
-	        existingEmployer.setEmpcountry(updatedEmployer.getEmpcountry());
-	        existingEmployer.setEmpstate(updatedEmployer.getEmpstate());
-	        existingEmployer.setEmpcity(updatedEmployer.getEmpcity());
-	        existingEmployer.setDescriptionemp(updatedEmployer.getDescriptionemp());
+	        existingUser.setEmpfname(updatedEmployer.getEmpfname());
+	        existingUser.setEmplname(updatedEmployer.getEmplname());
+	        existingUser.setEmpcompany(updatedEmployer.getEmpcompany());
+	        existingUser.setEmpphone(updatedEmployer.getEmpphone());
+	        existingUser.setEmpcountry(updatedEmployer.getEmpcountry());
+	        existingUser.setEmpstate(updatedEmployer.getEmpstate());
+	        existingUser.setEmpcity(updatedEmployer.getEmpcity());
+	        existingUser.setDescriptionemp(updatedEmployer.getDescriptionemp());
 	        
 	        // Save the updated record
-	        return ed.save(existingEmployer);
+	        return ed.save(existingUser);
 	    } else {
 	        // If it doesn't exist, create a new record
 	        return ed.save(updatedEmployer);

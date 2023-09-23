@@ -23,15 +23,24 @@ public class ApplyJob {
 	private String jujavavalid;
 	private String jujobtitle;
 	private String jucompanyname;
+	private String description;
+	private Long juphone;
+	private String julastsal;
+	private String juexpecsalary;
 	public ApplyJob() {	
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	
+	
+
+
+
 	public ApplyJob(int juid, String juname, String jumail, String jucompny, String juresume, String jurelocation,
 			String jueducation, String juexperience, String juexpinjava, String juexpjsp, String juinterviewdate,
-			String jujavavalid, String jujobtitle, String jucompanyname) {
+			String jujavavalid, String jujobtitle, String jucompanyname, String description, Long juphone,
+			String julastsal, String juexpecsalary) {
 		super();
 		this.juid = juid;
 		this.juname = juname;
@@ -47,7 +56,14 @@ public class ApplyJob {
 		this.jujavavalid = jujavavalid;
 		this.jujobtitle = jujobtitle;
 		this.jucompanyname = jucompanyname;
+		this.description = description;
+		this.juphone = juphone;
+		this.julastsal = julastsal;
+		this.juexpecsalary = juexpecsalary;
 	}
+
+
+
 
 
 
@@ -142,6 +158,78 @@ public class ApplyJob {
 
 	public void setJucompny(String jucompny) {
 		this.jucompny = jucompny;
+	}
+
+
+
+
+
+
+	public String getDescription() {
+		return description;
+	}
+
+
+
+
+
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+
+
+
+
+
+	public Long getJuphone() {
+		return juphone;
+	}
+
+
+
+
+
+
+	public void setJuphone(Long juphone) {
+		this.juphone = juphone;
+	}
+
+
+
+
+
+
+	public String getJulastsal() {
+		return julastsal;
+	}
+
+
+
+
+
+
+	public void setJulastsal(String julastsal) {
+		this.julastsal = julastsal;
+	}
+
+
+
+
+
+
+	public String getJuexpecsalary() {
+		return juexpecsalary;
+	}
+
+
+
+
+
+
+	public void setJuexpecsalary(String juexpecsalary) {
+		this.juexpecsalary = juexpecsalary;
 	}
 	
 	
