@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.EmployerDao;
 import com.demo.oragejobsite.entity.Employer;
 
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class EmployerController {
 	@Autowired
 	private EmployerDao ed;
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/insertemployer")
 	public Employer insertemployer(@RequestBody Employer emp)
 	{
@@ -34,7 +34,7 @@ public class EmployerController {
 	}
 	
 	
-	@CrossOrigin(origins = "https://job4jobless.com")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/insertemployeremail")
 	public Employer insertemployeremail(@RequestBody Map<String, String> requestBody) {
 	    String empmailid = requestBody.get("empmailid");
@@ -56,7 +56,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/logincheckemp")
 	public Employer logincheckemp(@RequestBody Employer e12, HttpServletResponse response)
 	{
@@ -105,7 +105,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@GetMapping("/fetchemployer")
 	public List<Employer> fetchemployer(){
 		return ed.findAll();
@@ -113,7 +113,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/updateEmployee")
 	public Employer updateEmployee(@RequestBody Employer updatedEmployer) {
 	    // Check if an employer with the provided emppass exists

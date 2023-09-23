@@ -19,7 +19,7 @@ import com.demo.oragejobsite.dao.UserDao;
 import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
 
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class UserController {
 
@@ -27,7 +27,7 @@ public class UserController {
 	private UserDao ud;
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/insertusermail")
 	public User insertusermail(@RequestBody User c1)
 	{
@@ -37,7 +37,7 @@ public class UserController {
 	
 	
 
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
     @PostMapping("/insertusermailgog")
     public ResponseEntity<String> insertUserWithUniqueUsername(@RequestBody User user) {
         // Check if the username already exists in the database
@@ -55,7 +55,7 @@ public class UserController {
     }
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/logincheck")
 	public User logincheck(@RequestBody User c12, HttpServletResponse response)
 	{
@@ -98,13 +98,13 @@ public class UserController {
 	
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@GetMapping("/fetchuser")
 	public List<User> fetchuser(){
 		return ud.findAll();
 	}
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/updateUser")
 	public User updateUser(@RequestBody User updatedUser) {
 	    // Check if an employer with the provided emppass exists

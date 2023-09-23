@@ -12,12 +12,12 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.ApplyDao;
 import com.demo.oragejobsite.entity.ApplyJob;
 
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class ApplyController {
 	@Autowired
 	private ApplyDao apd;
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/insertapplyjob")
 	public ApplyJob insertapplyjob(@RequestBody ApplyJob applyjob)
 	{
@@ -26,7 +26,7 @@ public class ApplyController {
 	}
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@GetMapping("/fetchapplyform")
 	public List<ApplyJob> fetchapplyform(){
 		return apd.findAll();

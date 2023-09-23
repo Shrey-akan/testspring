@@ -14,7 +14,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
             	registry.addMapping("*")
-                .allowedOrigins("https://job4jobless.com")
+                .allowedOrigins("http://159.203.168.51")
                 
                 .allowCredentials(true);
             }

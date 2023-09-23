@@ -12,21 +12,21 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.NotificationDao;
 import com.demo.oragejobsite.entity.Notification;
 
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class NotificationController {
 	@Autowired
 	private NotificationDao nd;
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@PostMapping("/insertnotification")
 	public Notification insertnotification(@RequestBody Notification nn)
 	{
 			return nd.save(nn);
 		
 	}
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://159.203.168.51")
 	@GetMapping("/fetchnotify")
 	public List<Notification> fetchnotify(){
 		return nd.findAll();
