@@ -1,5 +1,6 @@
 package com.demo.oragejobsite.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,11 +9,12 @@ import javax.persistence.Id;
 @Entity
 public class ApplyJob {
 	@Id
-	 @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int juid;
+	@Column(columnDefinition = "VARCHAR(36)") 
+	private String juid; // Use UUID for the UID field
 	private String juname;
 	private String jumail;
 	private String jucompny;
+	private String jutitle;
 	private String juresume;
 	private String jurelocation;
 	private String jueducation;
@@ -27,6 +29,7 @@ public class ApplyJob {
 	private Long juphone;
 	private String julastsal;
 	private String juexpecsalary;
+	private String empid;
 	public ApplyJob() {	
 		super();
 		// TODO Auto-generated constructor stub
@@ -37,15 +40,29 @@ public class ApplyJob {
 
 
 
-	public ApplyJob(int juid, String juname, String jumail, String jucompny, String juresume, String jurelocation,
-			String jueducation, String juexperience, String juexpinjava, String juexpjsp, String juinterviewdate,
-			String jujavavalid, String jujobtitle, String jucompanyname, String description, Long juphone,
-			String julastsal, String juexpecsalary) {
+
+
+
+
+
+
+
+	
+
+
+
+
+
+	public ApplyJob(String juid, String juname, String jumail, String jucompny, String jutitle, String juresume,
+			String jurelocation, String jueducation, String juexperience, String juexpinjava, String juexpjsp,
+			String juinterviewdate, String jujavavalid, String jujobtitle, String jucompanyname, String description,
+			Long juphone, String julastsal, String juexpecsalary, String empid) {
 		super();
 		this.juid = juid;
 		this.juname = juname;
 		this.jumail = jumail;
 		this.jucompny = jucompny;
+		this.jutitle = jutitle;
 		this.juresume = juresume;
 		this.jurelocation = jurelocation;
 		this.jueducation = jueducation;
@@ -60,6 +77,7 @@ public class ApplyJob {
 		this.juphone = juphone;
 		this.julastsal = julastsal;
 		this.juexpecsalary = juexpecsalary;
+		this.empid = empid;
 	}
 
 
@@ -67,12 +85,51 @@ public class ApplyJob {
 
 
 
-	public int getJuid() {
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public String getJuid() {
 		return juid;
 	}
-	public void setJuid(int juid) {
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setJuid(String juid) {
 		this.juid = juid;
 	}
+
+
+
+
+
+
+
+
+
+
+
+
+
 	public String getJuname() {
 		return juname;
 	}
@@ -230,6 +287,94 @@ public class ApplyJob {
 
 	public void setJuexpecsalary(String juexpecsalary) {
 		this.juexpecsalary = juexpecsalary;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public String getJutitle() {
+		return jutitle;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setJutitle(String jutitle) {
+		this.jutitle = jutitle;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public String getEmpid() {
+		return empid;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	public void setEmpid(String empid) {
+		this.empid = empid;
 	}
 	
 	

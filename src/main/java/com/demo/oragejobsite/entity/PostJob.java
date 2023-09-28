@@ -1,5 +1,6 @@
 package com.demo.oragejobsite.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,8 +9,9 @@ import javax.persistence.Id;
 @Entity
 public class PostJob {
 @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private int jobid;
+
+@Column(columnDefinition = "VARCHAR(36)") 
+private String jobid; // Use UUID for the UID field
 private String jobtitle;
 private String companyforthisjob;
 private Long numberofopening;
@@ -19,7 +21,7 @@ private String schedulejob;
 private Long payjob;
 private Long payjobsup;
 private String descriptiondata;
-private String empmailid;
+private String empid;
 
 public PostJob() {
 	super();
@@ -29,8 +31,12 @@ public PostJob() {
 
 
 
-public PostJob(int jobid, String jobtitle, String companyforthisjob, Long numberofopening, String locationjob,
-		String jobtype, String schedulejob, Long payjob, Long payjobsup, String descriptiondata, String empmailid) {
+
+
+
+
+public PostJob(String jobid, String jobtitle, String companyforthisjob, Long numberofopening, String locationjob,
+		String jobtype, String schedulejob, Long payjob, Long payjobsup, String descriptiondata, String empid) {
 	super();
 	this.jobid = jobid;
 	this.jobtitle = jobtitle;
@@ -42,18 +48,30 @@ public PostJob(int jobid, String jobtitle, String companyforthisjob, Long number
 	this.payjob = payjob;
 	this.payjobsup = payjobsup;
 	this.descriptiondata = descriptiondata;
-	this.empmailid = empmailid;
+	this.empid = empid;
 }
 
 
 
 
-public int getJobid() {
+
+
+
+
+public String getJobid() {
 	return jobid;
 }
-public void setJobid(int jobid) {
+
+
+
+
+public void setJobid(String jobid) {
 	this.jobid = jobid;
 }
+
+
+
+
 public String getJobtitle() {
 	return jobtitle;
 }
@@ -112,16 +130,19 @@ public void setDescriptiondata(String descriptiondata) {
 
 
 
-public String getEmpmailid() {
-	return empmailid;
+public String getEmpid() {
+	return empid;
+}
+
+
+public void setEmpid(String empid) {
+	this.empid = empid;
 }
 
 
 
 
-public void setEmpmailid(String empmailid) {
-	this.empmailid = empmailid;
-}
+
 
 
 

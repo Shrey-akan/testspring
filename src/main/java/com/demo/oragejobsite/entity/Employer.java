@@ -1,5 +1,8 @@
 package com.demo.oragejobsite.entity;
 
+import java.util.UUID;
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,11 +11,12 @@ import javax.persistence.Id;
 @Entity
 public class Employer {
 	@Id
-	 @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int empid;
+	@Column(columnDefinition = "VARCHAR(36)") 
+	private String empid; // Use UUID for the UID field
 	private String empfname;
 	private String emplname;
 	private String empcompany;
+	@Column(unique = true, nullable = false)
 	private String empmailid;
 	private String emppass;
 	private Long empphone;
@@ -20,12 +24,15 @@ public class Employer {
 	private String empstate;
 	private String empcity;
 	private String descriptionemp;
+	   private boolean verifiedemp;
 	public Employer() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
-	public Employer(int empid, String empfname, String emplname, String empcompany, String empmailid, String emppass,
-			Long empphone, String empcountry, String empstate, String empcity, String descriptionemp) {
+	
+	public Employer(String empid, String empfname, String emplname, String empcompany, String empmailid, String emppass,
+			Long empphone, String empcountry, String empstate, String empcity, String descriptionemp,
+			boolean verifiedemp) {
 		super();
 		this.empid = empid;
 		this.empfname = empfname;
@@ -38,13 +45,31 @@ public class Employer {
 		this.empstate = empstate;
 		this.empcity = empcity;
 		this.descriptionemp = descriptionemp;
+		this.verifiedemp = verifiedemp;
 	}
-	public int getEmpid() {
+	public String getEmpid() {
 		return empid;
 	}
-	public void setEmpid(int empid) {
+
+
+
+	public void setEmpid(String empid) {
 		this.empid = empid;
 	}
+
+
+
+	public boolean isVerifiedemp() {
+		return verifiedemp;
+	}
+
+
+
+	public void setVerifiedemp(boolean verifiedemp) {
+		this.verifiedemp = verifiedemp;
+	}
+
+
 	public String getEmpfname() {
 		return empfname;
 	}
@@ -107,6 +132,5 @@ public class Employer {
 	}
 	
 	
-
 }
 

@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository;
 import com.demo.oragejobsite.entity.ApplyJob;
 
 @Repository
-public interface ApplyDao extends JpaRepository<ApplyJob, Integer>{
-
+public interface ApplyDao extends JpaRepository<ApplyJob, String>{
+	
 }
 

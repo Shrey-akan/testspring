@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "quiz_questions")
 public class QuizQuestion {
-    @Id
+    @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

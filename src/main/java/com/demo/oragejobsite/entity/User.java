@@ -1,5 +1,8 @@
 package com.demo.oragejobsite.entity;
 
+
+
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,9 +11,11 @@ import javax.persistence.Id;
 @Entity
 public class User {
 @Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private int uid;
-   private String userName;
+@Column(columnDefinition = "VARCHAR(36)") 
+private String uid; // Use UUID for the UID field
+
+@Column(unique = true, nullable = false)
+private String userName;
    private String userFirstName;
    private String userLastName;
    private String userPassword;
@@ -25,9 +30,7 @@ public User() {
 	super();
 	// TODO Auto-generated constructor stub
 }
-
-
-public User(int uid, String userName, String userFirstName, String userLastName, String userPassword,
+public User(String uid, String userName, String userFirstName, String userLastName, String userPassword,
 		String companyuser, String websiteuser, String userphone, String usercountry, String userstate, String usercity,
 		boolean verified) {
 	super();
@@ -47,13 +50,16 @@ public User(int uid, String userName, String userFirstName, String userLastName,
 
 
 
-public int getUid() {
+public String getUid() {
 	return uid;
 }
 
-public void setUid(int uid) {
+public void setUid(String uid) {
 	this.uid = uid;
 }
+
+
+
 public String getUserName() {
 	return userName;
 }
