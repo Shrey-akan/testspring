@@ -9,31 +9,62 @@ import javax.persistence.Id;
 public class Notification {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int nid;
+	private Long nid;
 	private String nhead;
 	private String nsubhead;
 	private String ndescription;
 	private String notisend;
+	private String notifyuid;
 	public Notification() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
-	public Notification(int nid, String nhead, String nsubhead, String ndescription, String notisend) {
+
+
+
+
+
+
+
+	
+	public Notification(Long nid, String nhead, String nsubhead, String ndescription, String notisend,
+			String notifyuid) {
 		super();
 		this.nid = nid;
 		this.nhead = nhead;
 		this.nsubhead = nsubhead;
 		this.ndescription = ndescription;
 		this.notisend = notisend;
+		this.notifyuid = notifyuid;
 	}
 
-	public int getNid() {
+
+
+
+
+
+
+
+
+	public Long getNid() {
 		return nid;
 	}
-	public void setNid(int nid) {
+
+
+
+
+
+
+	public void setNid(Long nid) {
 		this.nid = nid;
 	}
+
+
+
+
+
+
 	public String getNhead() {
 		return nhead;
 	}
@@ -60,6 +91,32 @@ public class Notification {
 	public void setNotisend(String notisend) {
 		this.notisend = notisend;
 	}
+
+
+
+
+
+
+
+
+
+	public String getNotifyuid() {
+		return notifyuid;
+	}
+
+
+
+
+
+
+
+
+
+	public void setNotifyuid(String notifyuid) {
+		this.notifyuid = notifyuid;
+	}
+
+
 	
 }
 
