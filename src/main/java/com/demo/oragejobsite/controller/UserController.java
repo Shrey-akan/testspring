@@ -25,7 +25,7 @@ import com.demo.oragejobsite.dao.UserDao;
 import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class UserController {
 
@@ -35,7 +35,7 @@ public class UserController {
 	
 	
 	//Insert User And Also Check if the user already exist in the database 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/insertusermail")
 	public ResponseEntity<Object> insertusermail(@RequestBody User c1) {
 	    try {
@@ -82,7 +82,7 @@ public class UserController {
 
 
 	//fetch user data
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@GetMapping("/fetchuser")
 	public ResponseEntity<List<User>> fetchuser() {
 	    try {
@@ -101,7 +101,7 @@ public class UserController {
 	}
 	
 	//Update User data
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestBody User updatedUser) {
         try {
@@ -172,7 +172,7 @@ public class UserController {
 	
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="http://159.203.168.51")
 	 @PostMapping("/logincheck")
     public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
         String checkemail = c12.getUserName();
@@ -207,7 +207,7 @@ public class UserController {
     }
 	
     
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "http://159.203.168.51")
     @PostMapping("/verifyUser")
     public ResponseEntity<?> verifyUser(@RequestBody Map<String, String> request) {
         try {
@@ -239,7 +239,7 @@ public class UserController {
 
 
 	
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "http://159.203.168.51")
     @DeleteMapping("/deleteUser/{uid}")
     public ResponseEntity<Object> deleteUserByUid(@PathVariable String uid) {
         try {

@@ -16,13 +16,13 @@ import com.demo.oragejobsite.dao.Contactfrontdao;
 import com.demo.oragejobsite.entity.Contact;
 import com.demo.oragejobsite.entity.DirectConntact;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class ContactContro {
 	@Autowired
 	private Contactfrontdao contatfront;
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/insertfrontform")
 	public ResponseEntity<Boolean> insertfrontform(@RequestBody DirectConntact contact) {
 	    try {
@@ -43,7 +43,7 @@ public class ContactContro {
 	}
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@GetMapping("/fetchcontactfront")
 	public ResponseEntity<List<DirectConntact>> fetchcontactfront() {
 	    try {

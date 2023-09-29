@@ -25,7 +25,7 @@ import com.demo.oragejobsite.dao.EmployerDao;
 import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class EmployerController {
 	@Autowired
@@ -33,7 +33,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/insertEmployer")
 	public ResponseEntity<Object> insertEmployer(@RequestBody Employer emp) {
 	    try {
@@ -76,7 +76,7 @@ public class EmployerController {
 	
 	
 	//Fetch Employer Details
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@GetMapping("/fetchemployer")
 	public ResponseEntity<List<Employer>> fetchemployer() {
 	    try {
@@ -97,7 +97,7 @@ public class EmployerController {
 	
 	
 	//update employer
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/updateEmployee")
 	public ResponseEntity<?> updateEmployee(@RequestBody Employer updatedEmployer) {
 	    try {
@@ -164,7 +164,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/logincheckemp")
 	public ResponseEntity<?> logincheckemp(@RequestBody Employer e12, HttpServletResponse response) {
 	    try {
@@ -206,7 +206,7 @@ public class EmployerController {
 	}
 
 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/verifyEmployer")
 	public ResponseEntity<Object> verifyEmployer(@RequestBody Map<String, String> request) {
 	    try {
@@ -238,7 +238,7 @@ public class EmployerController {
 	    }
 	}
 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@DeleteMapping("/deleteEmployer/{empid}")
 	public ResponseEntity<?> deleteEmployer(@PathVariable String empid) {
 	    try {

@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.ApplyDao;
 import com.demo.oragejobsite.entity.ApplyJob;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="http://159.203.168.51")
 @RestController
 public class ApplyController {
 	@Autowired
@@ -25,7 +25,7 @@ public class ApplyController {
 	
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@PostMapping("/insertapplyjob")
 	public ResponseEntity<?> insertapplyjob(@RequestBody ApplyJob applyjob) {
 	    try {
@@ -57,7 +57,7 @@ public class ApplyController {
 
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins = "http://159.203.168.51")
 	@GetMapping("/fetchapplyform")
 	public ResponseEntity<?> fetchapplyform() {
 	    try {
