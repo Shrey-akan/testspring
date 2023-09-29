@@ -25,10 +25,10 @@ public class QuizController {
     
 	@CrossOrigin(origins="http://localhost:4200")
     @PostMapping("/add")
-    public ResponseEntity<String> addQuestion(@RequestBody QuizQuestion question) {
+    public ResponseEntity<Object> addQuestion(@RequestBody QuizQuestion question) {
         try {
             questionRepository.save(question);
-            return ResponseEntity.ok("Question added successfully");
+            return ResponseEntity.status(HttpStatus.OK).body(question);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to add question");
         }
