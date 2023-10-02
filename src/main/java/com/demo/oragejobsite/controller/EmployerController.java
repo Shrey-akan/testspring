@@ -1,5 +1,8 @@
 package com.demo.oragejobsite.controller;
 
+
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,15 +28,38 @@ import com.demo.oragejobsite.dao.EmployerDao;
 import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
 
-@CrossOrigin(origins="http://159.203.168.51")
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class EmployerController {
 	@Autowired
 	private EmployerDao ed;
 	
 	
+	private static  String hashPassword(String password) {
+        try {
+            // Create a MessageDigest instance for SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            // Add the password bytes to the digest
+            md.update(password.getBytes());
+
+            // Get the hashed password bytes
+            byte[] hashedPasswordBytes = md.digest();
+
+            // Convert the bytes to a hexadecimal string
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedPasswordBytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
+    }
 	
-	@CrossOrigin(origins = "http://159.203.168.51")
+	
+	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/insertEmployer")
 	public ResponseEntity<Object> insertEmployer(@RequestBody Employer emp) {
 	    try {
@@ -45,6 +71,10 @@ public class EmployerController {
 	        randomString = randomString.replaceAll("-", "");
 	        // Set the generated ID as the employer ID
 	        emp.setEmpid(randomString);
+	        String pass=emp.getEmppass();
+            pass=hashPassword(pass);
+            
+            emp.setEmppass(pass);
 
 	        // Check if the employer name already exists in the database
 	        Employer existingEmployer = ed.findByEmpmailid(emp.getEmpmailid());
@@ -76,7 +106,7 @@ public class EmployerController {
 	
 	
 	//Fetch Employer Details
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/fetchemployer")
 	public ResponseEntity<List<Employer>> fetchemployer() {
 	    try {
@@ -97,7 +127,7 @@ public class EmployerController {
 	
 	
 	//update employer
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/updateEmployee")
 	public ResponseEntity<?> updateEmployee(@RequestBody Employer updatedEmployer) {
 	    try {
@@ -164,12 +194,13 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/logincheckemp")
 	public ResponseEntity<?> logincheckemp(@RequestBody Employer e12, HttpServletResponse response) {
 	    try {
 	        String checkemail = e12.getEmpmailid();
 	        String checkpass = e12.getEmppass();
+	        checkpass=hashPassword(checkpass);
 	        System.out.println(checkemail + " " + checkpass);
 
 	        Employer checkmail = checkMailUser(checkemail, checkpass);
@@ -206,7 +237,7 @@ public class EmployerController {
 	}
 
 
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/verifyEmployer")
 	public ResponseEntity<Object> verifyEmployer(@RequestBody Map<String, String> request) {
 	    try {
@@ -238,7 +269,7 @@ public class EmployerController {
 	    }
 	}
 
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@DeleteMapping("/deleteEmployer/{empid}")
 	public ResponseEntity<?> deleteEmployer(@PathVariable String empid) {
 	    try {

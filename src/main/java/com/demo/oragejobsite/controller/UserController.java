@@ -25,7 +25,10 @@ import com.demo.oragejobsite.dao.UserDao;
 import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
 
-@CrossOrigin(origins="http://159.203.168.51")
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class UserController {
 
@@ -33,9 +36,32 @@ public class UserController {
 	private UserDao ud;
 		
 	
+	private static  String hashPassword(String password) {
+        try {
+            // Create a MessageDigest instance for SHA-256
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+
+            // Add the password bytes to the digest
+            md.update(password.getBytes());
+
+            // Get the hashed password bytes
+            byte[] hashedPasswordBytes = md.digest();
+
+            // Convert the bytes to a hexadecimal string
+            StringBuilder sb = new StringBuilder();
+            for (byte b : hashedPasswordBytes) {
+                sb.append(String.format("%02x", b));
+            }
+
+            return sb.toString();
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException("Error hashing password", e);
+        }
+    }
+	
 	
 	//Insert User And Also Check if the user already exist in the database 
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@PostMapping("/insertusermail")
 	public ResponseEntity<Object> insertusermail(@RequestBody User c1) {
 	    try {
@@ -47,7 +73,10 @@ public class UserController {
 
 	        // Set the randomString as the Juid for the ApplyJob
 	        c1.setUid(randomString);
-
+            String pass=c1.getUserPassword();
+            pass=hashPassword(pass);
+            
+            c1.setUserPassword(pass);
 	   
 	        // Set the initial value of 'verify' to false
 	        c1.setVerified(false);
@@ -82,7 +111,7 @@ public class UserController {
 
 
 	//fetch user data
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "http://localhost:4200")
 	@GetMapping("/fetchuser")
 	public ResponseEntity<List<User>> fetchuser() {
 	    try {
@@ -101,7 +130,7 @@ public class UserController {
 	}
 	
 	//Update User data
-	@CrossOrigin(origins = "http://159.203.168.51")
+	@CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestBody User updatedUser) {
         try {
@@ -172,11 +201,14 @@ public class UserController {
 	
 	
 	
-	@CrossOrigin(origins="http://159.203.168.51")
+	@CrossOrigin(origins="http://localhost:4200")
 	 @PostMapping("/logincheck")
     public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
         String checkemail = c12.getUserName();
         String checkpass = c12.getUserPassword();
+        checkpass=hashPassword(checkpass);
+      
+        		
 
         User checkmail = checkMailUser(checkemail, checkpass);
 
@@ -207,7 +239,7 @@ public class UserController {
     }
 	
     
-    @CrossOrigin(origins = "http://159.203.168.51")
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/verifyUser")
     public ResponseEntity<?> verifyUser(@RequestBody Map<String, String> request) {
         try {
@@ -239,7 +271,7 @@ public class UserController {
 
 
 	
-    @CrossOrigin(origins = "http://159.203.168.51")
+    @CrossOrigin(origins = "http://localhost:4200")
     @DeleteMapping("/deleteUser/{uid}")
     public ResponseEntity<Object> deleteUserByUid(@PathVariable String uid) {
         try {
