@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.UserDao;
 import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
+import com.demo.oragejobsite.util.JwtTokenUtil;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -34,7 +35,8 @@ public class UserController {
 
 	@Autowired
 	private UserDao ud;
-		
+	@Autowired
+    private JwtTokenUtil jwtTokenUtil;
 	
 	private static  String hashPassword(String password) {
         try {
@@ -201,29 +203,43 @@ public class UserController {
 	
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
-	 @PostMapping("/logincheck")
-    public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
-        String checkemail = c12.getUserName();
-        String checkpass = c12.getUserPassword();
-        checkpass=hashPassword(checkpass);
-      
-        		
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/logincheck")
+	public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
+	   try {
+		   String checkemail = c12.getUserName();
+		    String checkpass = c12.getUserPassword();
+		    checkpass = hashPassword(checkpass);
 
-        User checkmail = checkMailUser(checkemail, checkpass);
+		    User checkmail = checkMailUser(checkemail, checkpass);
 
-        if (checkmail != null) {
-            // Create and set cookies here
-            Cookie userCookie = new Cookie("user", checkemail);
-            userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
-            userCookie.setPath("/"); // Set the path to match your frontend
-            response.addCookie(userCookie);
+		    if (checkmail != null) {
+		        // Create and set cookies here
+		        Cookie userCookie = new Cookie("user", checkemail);
+		        userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+		        userCookie.setPath("/"); // Set the path to match your frontend
+		        response.addCookie(userCookie);
 
-            return ResponseEntity.ok(checkmail);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-        }
-    }
+		        // Generate an access token
+		        String accessToken = jwtTokenUtil.generateToken(checkemail);
+
+		        // Create a response object that includes the access token and UID
+		        Map<String, Object> responseBody = new HashMap<>();
+		        responseBody.put("accessToken", accessToken);
+		        responseBody.put("uid", checkmail.getUid());
+
+		        return ResponseEntity.ok(responseBody);
+		    } else {
+		        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+		    }
+	   }
+	   catch (Exception e) {
+	        // Handle any exceptions that may occur
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // You can customize the error response as needed
+	    }
+	}
+
 
     // ... Other methods ...
 
@@ -231,7 +247,9 @@ public class UserController {
         // TODO Auto-generated method stub
         List<User> allMails = ud.findAll();
         for (User u1 : allMails) {
+        	 System.out.println("Checking the password"+checkpass);
         	if (u1.getUserName().equals(checkemail) && u1.getUserPassword().equals(checkpass) && u1.isVerified()) {
+        		  System.out.println("Checking the password"+u1.getUserPassword());
                 return u1; // User found, return user details
             }
         }
@@ -292,6 +310,74 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
         }
     }
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/resetPassword")
+    public ResponseEntity<Boolean> resetPassword(@RequestBody Map<String, String> request) {
 
+        try {
+
+            String userName = request.get("userName");
+
+            String oldPassword = request.get("oldPassword");
+
+            String newPassword = request.get("newPassword");
+
+
+
+            // Find the user by userName
+
+            User user = ud.findByUserName(userName);
+
+
+
+            if (user != null) {
+
+                // Verify the old password
+
+                String hashedOldPassword = hashPassword(oldPassword);
+
+                if (hashedOldPassword.equals(user.getUserPassword())) {
+
+                    // Hash the new password
+
+                    String hashedNewPassword = hashPassword(newPassword);
+
+                    user.setUserPassword(hashedNewPassword);
+
+
+
+                    // Save the updated user record with the new password
+
+                    ud.save(user);
+
+
+
+                    return ResponseEntity.ok(true);
+
+                } else {
+
+                    // Old password does not match
+
+                    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+
+                }
+
+            } else {
+
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+
+            }
+
+        } catch (Exception e) {
+
+            // Handle any exceptions that may occur
+
+            e.printStackTrace();
+
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+
+        }
+
+    }
 	
 }

@@ -27,13 +27,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.EmployerDao;
 import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
+import com.demo.oragejobsite.util.JwtTokenUtil;
 
 @CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class EmployerController {
 	@Autowired
 	private EmployerDao ed;
-	
+	@Autowired
+    private JwtTokenUtil jwtTokenUtil;
 	
 	private static  String hashPassword(String password) {
         try {
@@ -200,7 +202,7 @@ public class EmployerController {
 	    try {
 	        String checkemail = e12.getEmpmailid();
 	        String checkpass = e12.getEmppass();
-	        checkpass=hashPassword(checkpass);
+	        checkpass = hashPassword(checkpass);
 	        System.out.println(checkemail + " " + checkpass);
 
 	        Employer checkmail = checkMailUser(checkemail, checkpass);
@@ -208,11 +210,20 @@ public class EmployerController {
 	            // Create and set cookies here
 	            Cookie employerCookie = new Cookie("emp", checkmail.toString());
 	            // Set the domain to match your frontend (e.g., localhost)
-	            employerCookie.setDomain("localhost");
+//	            employerCookie.setDomain("localhost");
 	            employerCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+	            employerCookie.setPath("/");
 	            response.addCookie(employerCookie);
+	            // Generate an access token
+	            String accessToken = jwtTokenUtil.generateToken(checkemail);
 
-	            return ResponseEntity.ok(checkmail);
+	            // Create a response object that includes the access token and UID
+	            Map<String, Object> responseBody = new HashMap<>();
+	            responseBody.put("accessToken", accessToken);
+	            responseBody.put("empid", checkmail.getEmpid());
+	            
+	            // Return the response as JSON
+	            return ResponseEntity.ok(responseBody);
 	        }
 
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
@@ -223,13 +234,16 @@ public class EmployerController {
 	    }
 	}
 
+
 	private Employer checkMailUser(String checkemail, String checkpass) {
 	    System.out.println("hello");
 	    List<Employer> allMails = ed.findAll();
 	    for (Employer u1 : allMails) {
 	        System.out.println(checkemail);
+	        System.out.println("Checking the password"+checkpass);
 	        if (u1.getEmpmailid() != null && u1.getEmpmailid().equals(checkemail) && u1.getEmppass() != null && u1.getEmppass().equals(checkpass) && u1.isVerifiedemp()) {
 	            System.out.println("inside");
+	            System.out.println("Checking the password"+u1.getEmppass());
 	            return u1; // Email and password match
 	        }
 	    }
@@ -293,7 +307,71 @@ public class EmployerController {
 
 	
 
-	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/resetPasswordEmp")
+	public ResponseEntity<Boolean> resetPasswordEmp(@RequestBody Map<String, String> request) {
+
+	    try {
+
+	        String empmailid = request.get("empmailid");
+
+	        String oldPassword = request.get("oldPassword");
+
+	        String newPassword = request.get("newPassword");
+
+
+
+	        // Find the employer by empmailid
+
+	        Employer employer = ed.findByEmpmailid(empmailid);
+
+
+
+	        if (employer != null) {
+
+	            // Check if the provided old password matches the current password
+
+	            if (employer.getEmppass().equals(hashPassword(oldPassword))) {
+
+	                // Hash the new password
+
+	                String hashedPassword = hashPassword(newPassword);
+
+	                employer.setEmppass(hashedPassword);
+
+
+
+	                // Save the updated employer record with the new password
+
+	                ed.save(employer);
+
+
+
+	                return ResponseEntity.status(HttpStatus.OK).body(true);
+
+	            } else {
+
+	                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+
+	            }
+
+	        } else {
+
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+
+	        }
+
+	    } catch (Exception e) {
+
+	        // Handle any exceptions that may occur
+
+	        e.printStackTrace();
+
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+
+	    }
+
+	}
 
 	
 

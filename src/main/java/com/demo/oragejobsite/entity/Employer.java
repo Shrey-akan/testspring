@@ -51,13 +51,9 @@ public class Employer {
 		return empid;
 	}
 
-
-
 	public void setEmpid(String empid) {
 		this.empid = empid;
 	}
-
-
 
 	public boolean isVerifiedemp() {
 		return verifiedemp;

@@ -48,8 +48,6 @@ public User(String uid, String userName, String userFirstName, String userLastNa
 	this.verified = verified;
 }
 
-
-
 public String getUid() {
 	return uid;
 }
@@ -57,9 +55,6 @@ public String getUid() {
 public void setUid(String uid) {
 	this.uid = uid;
 }
-
-
-
 public String getUserName() {
 	return userName;
 }
