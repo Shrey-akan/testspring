@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.ResumeDao;
 import com.demo.oragejobsite.entity.ResumeBuilder;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://job4jobless.com")
 @RestController
 public class Resumecontroller {
 	
 	@Autowired
 	private ResumeDao rm;
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/resumeinsert")
 	public ResumeBuilder resumeinsert(@RequestBody ResumeBuilder resume)
 	{
@@ -27,7 +27,7 @@ public class Resumecontroller {
 		
 	}
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchresumedetails")
 	public List<ResumeBuilder> fetchresumedetails(){
 		return rm.findAll();

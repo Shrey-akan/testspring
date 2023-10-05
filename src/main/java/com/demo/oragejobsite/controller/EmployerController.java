@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.oragejobsite.dao.EmployerDao;
@@ -29,7 +30,7 @@ import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
 import com.demo.oragejobsite.util.JwtTokenUtil;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://job4jobless.com")
 @RestController
 public class EmployerController {
 	@Autowired
@@ -61,7 +62,7 @@ public class EmployerController {
     }
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/insertEmployer")
 	public ResponseEntity<Object> insertEmployer(@RequestBody Employer emp) {
 	    try {
@@ -108,7 +109,7 @@ public class EmployerController {
 	
 	
 	//Fetch Employer Details
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchemployer")
 	public ResponseEntity<List<Employer>> fetchemployer() {
 	    try {
@@ -129,7 +130,7 @@ public class EmployerController {
 	
 	
 	//update employer
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/updateEmployee")
 	public ResponseEntity<?> updateEmployee(@RequestBody Employer updatedEmployer) {
 	    try {
@@ -196,7 +197,7 @@ public class EmployerController {
 	
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/logincheckemp")
 	public ResponseEntity<?> logincheckemp(@RequestBody Employer e12, HttpServletResponse response) {
 	    try {
@@ -251,7 +252,7 @@ public class EmployerController {
 	}
 
 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/verifyEmployer")
 	public ResponseEntity<Object> verifyEmployer(@RequestBody Map<String, String> request) {
 	    try {
@@ -283,7 +284,7 @@ public class EmployerController {
 	    }
 	}
 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@DeleteMapping("/deleteEmployer/{empid}")
 	public ResponseEntity<?> deleteEmployer(@PathVariable String empid) {
 	    try {
@@ -307,7 +308,7 @@ public class EmployerController {
 
 	
 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/resetPasswordEmp")
 	public ResponseEntity<Boolean> resetPasswordEmp(@RequestBody Map<String, String> request) {
 
@@ -372,9 +373,79 @@ public class EmployerController {
 	    }
 
 	}
-
 	
+	@CrossOrigin(origins="https://job4jobless.com")
+	@PostMapping("/resetPasswordEmpverify")
+	public ResponseEntity<Boolean> resetPasswordEmpverify(@RequestBody Map<String, String> request) {
+	    try {
+	        String empmailid = request.get("empmailid");
+	        String newPassword = request.get("newPassword");
 
+	        // Find the employer by empmailid
+	        Employer employer = ed.findByEmpmailid(empmailid);
+
+	        if (employer != null && employer.isVerifiedemp()) {
+	            // Hash the new password
+	            String hashedPassword = hashPassword(newPassword);
+	            employer.setEmppass(hashedPassword);
+
+	            // Save the updated employer record with the new password
+	            ed.save(employer);
+
+	            return ResponseEntity.status(HttpStatus.OK).body(true);
+	        } else {
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+	        }
+	    } catch (Exception e) {
+	        // Handle any exceptions that may occur
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+	    }
+	}
+
+
+	@CrossOrigin(origins="https://job4jobless.com")
+    @GetMapping("/checkEmployer")
+    public ResponseEntity<Object> checkEmployer(@RequestParam String empmailid) {
+        try {
+            Employer employer = ed.findByEmpmailid(empmailid);
+            if (employer != null) {
+                // Return user details as JSON
+                return ResponseEntity.ok(employer);
+            } else {
+                // User does not exist
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"message\": \"User with userName " + empmailid + " does not exist.\"}");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("{\"message\": \"An error occurred while processing your request.\"}");
+        }
+    }
+
+	@CrossOrigin(origins="https://job4jobless.com")
+    @PostMapping("/logoutEmployer")
+    public ResponseEntity<Boolean> logoutEmployer(HttpServletResponse response) {
+        try {
+            // Create a new cookie with the same name as your employer authentication token cookie
+            Cookie employerCookie = new Cookie("emp", null);
+            employerCookie.setMaxAge(0); // Set the cookie's max age to 0, which will remove it
+            employerCookie.setPath("/"); // Make sure the path matches the one used for employer authentication cookies
+
+            // Add the cookie to the response to remove it from the client-side
+            response.addCookie(employerCookie);
+
+            // Optionally, you can also invalidate the JWT token on the client-side
+            // by asking the client to discard the token.
+
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(false);
+        }
+    }
 
 
 

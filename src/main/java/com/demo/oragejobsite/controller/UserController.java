@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.oragejobsite.dao.UserDao;
@@ -29,7 +30,7 @@ import com.demo.oragejobsite.util.JwtTokenUtil;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://job4jobless.com")@CrossOrigin(origins="https://job4jobless.com")
 @RestController
 public class UserController {
 
@@ -63,7 +64,7 @@ public class UserController {
 	
 	
 	//Insert User And Also Check if the user already exist in the database 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/insertusermail")
 	public ResponseEntity<Object> insertusermail(@RequestBody User c1) {
 	    try {
@@ -113,7 +114,7 @@ public class UserController {
 
 
 	//fetch user data
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchuser")
 	public ResponseEntity<List<User>> fetchuser() {
 	    try {
@@ -132,7 +133,7 @@ public class UserController {
 	}
 	
 	//Update User data
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestBody User updatedUser) {
         try {
@@ -203,7 +204,7 @@ public class UserController {
 	
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/logincheck")
 	public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
 	   try {
@@ -257,7 +258,7 @@ public class UserController {
     }
 	
     
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/verifyUser")
     public ResponseEntity<?> verifyUser(@RequestBody Map<String, String> request) {
         try {
@@ -289,7 +290,7 @@ public class UserController {
 
 
 	
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins="https://job4jobless.com")
     @DeleteMapping("/deleteUser/{uid}")
     public ResponseEntity<Object> deleteUserByUid(@PathVariable String uid) {
         try {
@@ -310,7 +311,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
         }
     }
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/resetPassword")
     public ResponseEntity<Boolean> resetPassword(@RequestBody Map<String, String> request) {
 
@@ -379,5 +380,79 @@ public class UserController {
         }
 
     }
+    
+    @CrossOrigin(origins="https://job4jobless.com")
+    @PostMapping("/resetPasswordUser")
+    public ResponseEntity<Boolean> resetPasswordUser(@RequestBody Map<String, String> request) {
+        try {
+            String userName = request.get("userName");
+            String newPassword = request.get("newPassword");
+
+            // Find the user by userName
+            User user = ud.findByUserName(userName);
+
+            if (user != null && user.isVerified()) {
+                // Hash the new password
+                String hashedNewPassword = hashPassword(newPassword);
+                user.setUserPassword(hashedNewPassword);
+
+                // Save the updated user record with the new password
+                ud.save(user);
+
+                return ResponseEntity.ok(true);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+            }
+        } catch (Exception e) {
+            // Handle any exceptions that may occur
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(false);
+        }
+    }
+
+    
+    @CrossOrigin(origins="https://job4jobless.com")
+    @GetMapping("/checkuser")
+    public ResponseEntity<Object> checkUser(@RequestParam String userName) {
+        try {
+            User user = ud.findByUserName(userName);
+            if (user != null) {
+                // Return user details as JSON
+                return ResponseEntity.ok(user);
+            } else {
+                // User does not exist
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("{\"message\": \"User with userName " + userName + " does not exist.\"}");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("{\"message\": \"An error occurred while processing your request.\"}");
+        }
+    }
+    
+    @CrossOrigin(origins="https://job4jobless.com")
+    @PostMapping("/logout")
+    public ResponseEntity<Boolean> logout(HttpServletResponse response) {
+        try {
+            // Create a new cookie with the same name as your authentication token cookie
+            Cookie userCookie = new Cookie("user", null);
+            userCookie.setMaxAge(0); // Set the cookie's max age to 0, which will remove it
+            userCookie.setPath("/"); // Make sure the path matches the one used for authentication cookies
+            
+            // Add the cookie to the response to remove it from the client-side
+            response.addCookie(userCookie);
+
+            // Optionally, you can also invalidate the JWT token on the client-side
+            // by asking the client to discard the token.
+
+            return ResponseEntity.ok(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(false);
+        }
+    }
+
 	
 }

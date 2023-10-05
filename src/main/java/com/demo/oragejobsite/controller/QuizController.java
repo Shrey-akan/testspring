@@ -16,14 +16,14 @@ import com.demo.oragejobsite.dao.QuizQuestionRepository;
 import com.demo.oragejobsite.entity.QuizQuestion;
 
 @RestController
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://job4jobless.com")
 public class QuizController {
 
     @Autowired
     private QuizQuestionRepository questionRepository;
 
     
-	@CrossOrigin(origins="http://localhost:4200")
+    @CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/add")
     public ResponseEntity<Object> addQuestion(@RequestBody QuizQuestion question) {
         try {
@@ -34,7 +34,7 @@ public class QuizController {
         }
     }
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchquestion")
 	public ResponseEntity<List<QuizQuestion>> fetchquestion() {
 	    try {
@@ -47,7 +47,7 @@ public class QuizController {
 	}
 
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/deletequestion")
 	public ResponseEntity<String> deleteQuestionById(@RequestBody Map<String, Long> request) {
 	    Long id = request.get("id");
