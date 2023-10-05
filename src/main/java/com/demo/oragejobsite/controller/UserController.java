@@ -30,7 +30,7 @@ import com.demo.oragejobsite.util.JwtTokenUtil;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-@CrossOrigin(origins="https://job4jobless.com")@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="https://job4jobless.com")
 @RestController
 public class UserController {
 
