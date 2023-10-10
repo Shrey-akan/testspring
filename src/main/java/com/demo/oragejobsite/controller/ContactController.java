@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.ConatctDao;
 import com.demo.oragejobsite.entity.Contact;
 
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class ContactController {
 	@Autowired
 	private ConatctDao cd;
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/insertcontact")
 	public ResponseEntity<Boolean> insertcontact(@RequestBody Contact contact) {
 	    try {
@@ -44,7 +44,7 @@ public class ContactController {
 
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/fetchcontact")
 	public ResponseEntity<List<Contact>> fetchcontact() {
 	    try {

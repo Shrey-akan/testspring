@@ -16,7 +16,7 @@ import com.demo.oragejobsite.entity.SendMessage;
 import com.demo.oragejobsite.service.MessageService;
 
 @RestController
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://localhost:4200")
 public class SendMessageController {
 	@Autowired
 	private SendMessageDao sendmessage;
@@ -30,7 +30,7 @@ public class SendMessageController {
         this.messageService = messageService;
     }
 
-    @CrossOrigin(origins="https://job4jobless.com")
+    @CrossOrigin(origins="http://localhost:4200")
 	    @PostMapping("/send")
 	    public ResponseEntity<SendMessage> sendMessage(@RequestBody SendMessage message) {
 	        // Call the service to save the message to the database
@@ -40,7 +40,7 @@ public class SendMessageController {
 	        return new ResponseEntity<>(savedMessage, HttpStatus.CREATED);
 	    }
 	    
-    @CrossOrigin(origins="https://job4jobless.com")
+    @CrossOrigin(origins="http://localhost:4200")
 	    @GetMapping("/fetchMessages")
 	    public ResponseEntity<List<SendMessage>> fetchMessages() {
 	        List<SendMessage> messages = messageService.getAllMessages();

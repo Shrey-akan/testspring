@@ -16,7 +16,7 @@ import com.demo.oragejobsite.dao.Contactfrontdao;
 import com.demo.oragejobsite.entity.Contact;
 import com.demo.oragejobsite.entity.DirectConntact;
 
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class ContactContro {
 	@Autowired
@@ -43,7 +43,7 @@ public class ContactContro {
 	}
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/fetchcontactfront")
 	public ResponseEntity<List<DirectConntact>> fetchcontactfront() {
 	    try {

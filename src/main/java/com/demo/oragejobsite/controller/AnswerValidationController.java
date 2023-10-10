@@ -24,7 +24,7 @@ public class AnswerValidationController {
 	        this.quizQuestionRepository = quizQuestionRepository;
 	    }
 	    
-	@CrossOrigin(origins="https://job4jobless.com")
+	    @CrossOrigin(origins="http://localhost:4200")
     @PostMapping("/checkallanswer")
     public ResponseEntity<Boolean> validateAnswers(@RequestBody List<UserAnswer> userAnswers) {
         // Assuming you have a list of UserAnswer objects representing each question, user answer, and correct answer
