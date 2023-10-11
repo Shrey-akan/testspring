@@ -68,39 +68,49 @@ public class PostjobController {
 	    }
 	}
 	
-	 @PutMapping("/updatejob/{jobId}")
-	    public ResponseEntity<Object> updateJob(@PathVariable UUID jobId, @RequestBody PostJob updatedJob) {
-	        try {
-	        	Optional<PostJob> existingJob = pjd.findById(jobId);
+	 
+	@CrossOrigin(origins = "http://localhost:4200")
+    @PutMapping("/jobpostupdate/{jobid}")
+    public ResponseEntity<Object> jobpostupdate(@PathVariable String jobid, @RequestBody PostJob updatedJob) {
+        try {
+            // Find the existing job post by jobid
+            Optional<PostJob> existingJob = pjd.findById(jobid);
 
-	            if (existingJob == null) {
-	                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Job not found");
-	            }
+            if (existingJob.isPresent()) {
+                PostJob currentJob = existingJob.get();
+                
+                // Update the fields of the existing job post with the new values
+                currentJob.setJobtitle(updatedJob.getJobtitle());
+                currentJob.setCompanyforthisjob(updatedJob.getCompanyforthisjob());
+                currentJob.setNumberofopening(updatedJob.getNumberofopening());
+                currentJob.setLocationjob(updatedJob.getLocationjob());
+                currentJob.setJobtype(updatedJob.getJobtype());
+                currentJob.setSchedulejob(updatedJob.getSchedulejob());
+                currentJob.setPayjob(updatedJob.getPayjob());
+                currentJob.setPayjobsup(updatedJob.getPayjobsup());
+                currentJob.setDescriptiondata(updatedJob.getDescriptiondata());
+       
 
-	            // Update the existing job with the new data
-	            existingJob.setJobtitle(updatedJob.getJobtitle());
-	            existingJob.setCompanyforthisjob(updatedJob.getCompanyforthisjob());
-	            existingJob.setNumberofopening(updatedJob.getNumberofopening());
-	            existingJob.setLocationjob(updatedJob.getLocationjob());
-	            existingJob.setJobtype(updatedJob.getJobtype());
-	            existingJob.setSchedulejob(updatedJob.getSchedulejob());
-	            existingJob.setPayjob(updatedJob.getPayjob());
-	            existingJob.setPayjobsup(updatedJob.getPayjobsup());
-	            existingJob.setDescriptiondata(updatedJob.getDescriptiondata());
+                // Save the updated job post
+                pjd.save(currentJob);
 
-	            // Save the updated job
-	            pjd.save(existingJob);
-
-	            return ResponseEntity.status(HttpStatus.OK).body(existingJob);
-	        } catch (DataAccessException e) {
-	            e.printStackTrace();
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error occurred: " + e.getMessage());
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
-	        }
-	    }
-	
+                // If the update is successful, return a success message
+                return ResponseEntity.status(HttpStatus.OK).body(currentJob);
+            } else {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(false);
+            }
+        } catch (DataAccessException e) {
+            // Handle database-related exceptions (e.g., constraint violations)
+            e.printStackTrace();
+            // Return an error message
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error occurred: " + e.getMessage());
+        } catch (Exception e) {
+            // Handle any other exceptions that may occur
+            e.printStackTrace();
+            // Return an error message
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
+        }
+    }
 	
 }
 

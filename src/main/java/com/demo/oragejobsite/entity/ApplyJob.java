@@ -30,33 +30,19 @@ public class ApplyJob {
 	private String julastsal;
 	private String juexpecsalary;
 	private String empid;
+	private String uid;
+	
+	
 	public ApplyJob() {	
 		super();
 		// TODO Auto-generated constructor stub
 	}
 
 	
-	
-
-
-
-
-
-
-
-
-
-
-	
-
-
-
-
-
 	public ApplyJob(String juid, String juname, String jumail, String jucompny, String jutitle, String juresume,
 			String jurelocation, String jueducation, String juexperience, String juexpinjava, String juexpjsp,
 			String juinterviewdate, String jujavavalid, String jujobtitle, String jucompanyname, String description,
-			Long juphone, String julastsal, String juexpecsalary, String empid) {
+			Long juphone, String julastsal, String juexpecsalary, String empid, String uid) {
 		super();
 		this.juid = juid;
 		this.juname = juname;
@@ -78,24 +64,8 @@ public class ApplyJob {
 		this.julastsal = julastsal;
 		this.juexpecsalary = juexpecsalary;
 		this.empid = empid;
+		this.uid = uid;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 	public String getJuid() {
@@ -103,32 +73,9 @@ public class ApplyJob {
 	}
 
 
-
-
-
-
-
-
-
-
-
-
-
 	public void setJuid(String juid) {
 		this.juid = juid;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public String getJuname() {
 		return juname;
@@ -204,9 +151,6 @@ public class ApplyJob {
 	public void setJumail(String jumail) {
 		this.jumail = jumail;
 	}
-
-
-
 	public String getJucompny() {
 		return jucompny;
 	}
@@ -217,139 +161,45 @@ public class ApplyJob {
 		this.jucompny = jucompny;
 	}
 
-
-
-
-
-
 	public String getDescription() {
 		return description;
 	}
-
-
-
-
-
 
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
-
-
-
-
-
 	public Long getJuphone() {
 		return juphone;
 	}
-
-
-
-
-
 
 	public void setJuphone(Long juphone) {
 		this.juphone = juphone;
 	}
 
-
-
-
-
-
 	public String getJulastsal() {
 		return julastsal;
 	}
-
-
-
-
-
 
 	public void setJulastsal(String julastsal) {
 		this.julastsal = julastsal;
 	}
 
-
-
-
-
-
 	public String getJuexpecsalary() {
 		return juexpecsalary;
 	}
-
-
-
-
-
 
 	public void setJuexpecsalary(String juexpecsalary) {
 		this.juexpecsalary = juexpecsalary;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public String getJutitle() {
 		return jutitle;
 	}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public void setJutitle(String jutitle) {
 		this.jutitle = jutitle;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	public String getEmpid() {
 		return empid;
@@ -357,24 +207,18 @@ public class ApplyJob {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 	public void setEmpid(String empid) {
 		this.empid = empid;
+	}
+
+
+	public String getUid() {
+		return uid;
+	}
+
+
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 	
 	
