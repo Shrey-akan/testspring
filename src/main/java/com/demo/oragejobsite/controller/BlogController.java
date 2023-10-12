@@ -39,8 +39,7 @@ public class BlogController {
 
 	    @@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/createBlog")
-    public ResponseEntity<?> createBlog(
-            @RequestBody Blogs blog) {
+    public ResponseEntity<?> createBlog(@RequestBody Blogs blog) {
         // Delegate the saving of the blog to the service layer
 		Blogs savedBlog = blogService.createBlog(blog);
 
