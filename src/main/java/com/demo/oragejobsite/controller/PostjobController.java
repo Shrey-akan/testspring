@@ -19,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.PostjobDao;
 import com.demo.oragejobsite.entity.PostJob;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://job4jobless.com")
 @RestController
 public class PostjobController {
 	@Autowired
 	private PostjobDao pjd;
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/jobpostinsert")
 	public ResponseEntity<String> jobpostinsert(@RequestBody PostJob pj) {
 	    try {
@@ -56,7 +56,7 @@ public class PostjobController {
 	}
 
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchjobpost")
 	public ResponseEntity<List<PostJob>> fetchjobpost() {
 	    try {
@@ -69,7 +69,7 @@ public class PostjobController {
 	}
 	
 	 
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PutMapping("/jobpostupdate/{jobid}")
     public ResponseEntity<Object> jobpostupdate(@PathVariable String jobid, @RequestBody PostJob updatedJob) {
         try {
