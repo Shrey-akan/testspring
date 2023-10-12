@@ -241,6 +241,56 @@ public class UserController {
 	    }
 	}
 
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/logincheckgmail")
+	public ResponseEntity<?> logincheckgmail(@RequestBody User c12, HttpServletResponse response) {
+	    try {
+	        String checkemail = c12.getUserName();
+
+	        // Check if the email exists in your database
+	        boolean emailExists = checkIfEmailExists(checkemail);
+
+	        if (emailExists) {
+	            // Fetch the user's UID by checking the email
+	            Optional<User> userOptional = Optional.ofNullable(ud.findByUserName(checkemail));
+	            if (userOptional.isPresent()) {
+	                User user = userOptional.get();
+
+	                // Create and set cookies here
+	                Cookie userCookie = new Cookie("user", checkemail);
+	                userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+	                userCookie.setPath("/"); // Set the path to match your frontend
+	                response.addCookie(userCookie);
+
+	                // Generate an access token
+	                String accessToken = jwtTokenUtil.generateToken(checkemail);
+
+	                // Create a response object that includes the access token and UID
+	                Map<String, Object> responseBody = new HashMap<>();
+	                responseBody.put("accessToken", accessToken);
+	                responseBody.put("uid", user.getUid());
+
+	                return ResponseEntity.ok(responseBody);
+	            } else {
+	                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch UID");
+	            }
+	        } else {
+	            // Email doesn't exist, return an unauthorized response
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
+
+
+	public boolean checkIfEmailExists(String email) {
+	    // Use the UserRepository to check if the email exists
+	    Optional<User> userOptional = Optional.ofNullable(ud.findByUserName(email));
+	    return userOptional.isPresent(); // If the email exists, this will be true
+	}
+
 
     // ... Other methods ...
 
@@ -453,6 +503,72 @@ public class UserController {
                 .body(false);
         }
     }
+    @CrossOrigin(origins = "http://localhost:4200")
+    @PostMapping("/createOrGetUser")
+    public ResponseEntity<Map<String, Object>> createOrGetUser(@RequestBody String userName, HttpServletResponse response) {
+        try {
+            // Remove any invalid characters (e.g., CR) from the userName
+            userName = userName.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
 
-	
+            // Check if the user with the provided email (userName) exists
+            User existingUser = ud.findByUserName(userName);
+
+            if (existingUser != null) {
+                // User exists, return user data and access token
+                String accessToken = jwtTokenUtil.generateToken(existingUser.getUserName());
+
+                Map<String, Object> responseBody = new HashMap<>();
+                responseBody.put("userName", userName);
+                responseBody.put("accessToken", accessToken);
+                responseBody.put("uid", existingUser.getUid());
+
+                return ResponseEntity.ok(responseBody);
+            } else {
+                // User doesn't exist, create a new user
+                User newUser = createUser(userName, true);
+
+                // Set a user cookie
+                Cookie userCookie = new Cookie("user", userName);
+                userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+                userCookie.setPath("/"); // Set the path to match your frontend
+                response.addCookie(userCookie);
+
+                // Generate an access token
+                String accessToken = jwtTokenUtil.generateToken(userName);
+
+                // Create a response object that includes the access token and UID
+                Map<String, Object> responseBody = new HashMap<>();
+                responseBody.put("userName", userName);
+                responseBody.put("accessToken", accessToken);
+                responseBody.put("uid", newUser.getUid());
+
+                return ResponseEntity.ok(responseBody);
+            }
+        } catch (Exception e) {
+            // Handle any errors and return an appropriate error response
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "User creation and login failed");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+        }
+    }
+    public User createUser(String userName, boolean verified) {
+        User newUser = new User();
+        newUser.setUserName(userName);
+        newUser.setVerified(verified);
+
+        // Generate a UUID for the new user
+        String uuid = UUID.randomUUID().toString();
+        // Remove hyphens and special symbols
+        uuid = uuid.replaceAll("-", "");
+        newUser.setUid(uuid);
+        
+        // Perform the necessary operations to save the user to your database.
+        // You might need to use JPA, Hibernate, or your database's API here.
+
+        // After saving the user, you should return the saved user entity.
+        return ud.save(newUser);
+    }
+
+
 }

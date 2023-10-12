@@ -127,5 +127,6 @@ public boolean isVerified() {
 public void setVerified(boolean verified) {
 	this.verified = verified;
 }
+
 }
 

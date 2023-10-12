@@ -12,5 +12,8 @@ import com.demo.oragejobsite.entity.User;
 public interface UserDao extends JpaRepository<User, String>{
 	 Optional<User> findByUid(String uid);
 	User findByUserName(String userName);
+	
+
 }
+
 
