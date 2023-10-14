@@ -30,7 +30,7 @@ import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
 import com.demo.oragejobsite.util.JwtTokenUtil;
 
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class EmployerController {
 	@Autowired
@@ -62,7 +62,7 @@ public class EmployerController {
     }
 	
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/insertEmployer")
 	public ResponseEntity<Object> insertEmployer(@RequestBody Employer emp) {
 	    try {
@@ -109,7 +109,7 @@ public class EmployerController {
 	
 	
 	//Fetch Employer Details
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@GetMapping("/fetchemployer")
 	public ResponseEntity<List<Employer>> fetchemployer() {
 	    try {
@@ -130,7 +130,7 @@ public class EmployerController {
 	
 	
 	//update employer
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/updateEmployee")
 	public ResponseEntity<?> updateEmployee(@RequestBody Employer updatedEmployer) {
 	    try {
@@ -196,8 +196,58 @@ public class EmployerController {
 
 	
 	
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/employerLoginCheck")
+	public ResponseEntity<?> employerLoginCheck(@RequestBody Employer employer, HttpServletResponse response) {
+	    try {
+	        String checkEmail = employer.getEmpmailid(); // Assuming the employer's email field is "empmailid."
+
+	        // Check if the email exists in your employer database
+	        boolean emailExists = checkIfEmailExists(checkEmail);
+
+	        if (emailExists) {
+	            // Fetch the employer's data by checking the email
+	            Optional<Employer> employerOptional = Optional.ofNullable(ed.findByEmpmailid(checkEmail));
+	            if (employerOptional.isPresent()) {
+	                Employer foundEmployer = employerOptional.get();
+
+	                // Create and set cookies here
+	                Cookie employerCookie = new Cookie("emp", checkEmail);
+	                employerCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+	                employerCookie.setPath("/"); // Set the path to match your frontend
+	                response.addCookie(employerCookie);
+
+	                // Generate an access token for the employer
+	                String accessToken = jwtTokenUtil.generateToken(checkEmail);
+
+	                // Create a response object that includes the access token and employer data
+	                Map<String, Object> responseBody = new HashMap<>();
+	                responseBody.put("accessToken", accessToken);
+	                responseBody.put("empid", foundEmployer.getEmpid()); // Assuming you have an ID field in your Employer entity
+	                System.out.println("value coming from found employer "+foundEmployer.getEmpid());
+	                return ResponseEntity.ok(responseBody);
+	            } else {
+	                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch employer data");
+	            }
+	        } else {
+	            // Email doesn't exist, return an unauthorized response
+	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
+
+	public boolean checkIfEmailExists(String email) {
+	    // Use the EmployerDao (or your equivalent) to check if the email exists
+	    Employer existingEmployer = ed.findByEmpmailid(email);
+	    return existingEmployer != null; // If the email exists, this will be true
+	}
+
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/logincheckemp")
 	public ResponseEntity<?> logincheckemp(@RequestBody Employer e12, HttpServletResponse response) {
 	    try {
@@ -252,7 +302,7 @@ public class EmployerController {
 	}
 
 
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/verifyEmployer")
 	public ResponseEntity<Object> verifyEmployer(@RequestBody Map<String, String> request) {
 	    try {
@@ -284,7 +334,7 @@ public class EmployerController {
 	    }
 	}
 
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@DeleteMapping("/deleteEmployer/{empid}")
 	public ResponseEntity<?> deleteEmployer(@PathVariable String empid) {
 	    try {
@@ -308,7 +358,7 @@ public class EmployerController {
 
 	
 
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/resetPasswordEmp")
 	public ResponseEntity<Boolean> resetPasswordEmp(@RequestBody Map<String, String> request) {
 
@@ -374,7 +424,7 @@ public class EmployerController {
 
 	}
 	
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/resetPasswordEmpverify")
 	public ResponseEntity<Boolean> resetPasswordEmpverify(@RequestBody Map<String, String> request) {
 	    try {
@@ -404,7 +454,7 @@ public class EmployerController {
 	}
 
 
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
     @GetMapping("/checkEmployer")
     public ResponseEntity<Object> checkEmployer(@RequestParam String empmailid) {
         try {
@@ -424,7 +474,7 @@ public class EmployerController {
         }
     }
 
-	@CrossOrigin(origins="https://job4jobless.com")
+	@CrossOrigin(origins="http://localhost:4200")
     @PostMapping("/logoutEmployer")
     public ResponseEntity<Boolean> logoutEmployer(HttpServletResponse response) {
         try {
@@ -448,5 +498,69 @@ public class EmployerController {
     }
 
 
+	   @CrossOrigin(origins = "http://localhost:4200")
+	    @PostMapping("/createOrGetEmployer")
+	    public ResponseEntity<Map<String, Object>> createOrGetEmployer(@RequestBody String empmailid, HttpServletResponse response) {
+	        try {
+	            // Check if the employer with the provided email (empmailid) exists
+	            Employer existingEmployer = ed.findByEmpmailid(empmailid);
 
+	            if (existingEmployer != null) {
+	                // Employer exists, return employer data and access token
+	                String accessToken = jwtTokenUtil.generateToken(empmailid);
+
+	                Map<String, Object> responseBody = new HashMap<>();
+	                responseBody.put("empmailid", empmailid);
+	                responseBody.put("accessToken", accessToken);
+	                responseBody.put("empid", existingEmployer.getEmpid());
+   
+	                return ResponseEntity.ok(responseBody);
+	            } else {
+	                // Employer doesn't exist, create a new employer
+	                Employer newEmployer = createEmployer(empmailid, true);
+
+	                // Set an employer cookie
+	                Cookie employerCookie = new Cookie("emp", empmailid);
+	                employerCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+	                employerCookie.setPath("/"); // Set the path to match your frontend
+	                response.addCookie(employerCookie);
+
+	                // Generate an access token for the employer
+	                String accessToken = jwtTokenUtil.generateToken(empmailid);
+
+	                // Create a response object that includes the access token and empid
+	                Map<String, Object> responseBody = new HashMap<>();
+	                responseBody.put("empmailid", empmailid);
+	                responseBody.put("accessToken", accessToken);
+	                responseBody.put("empid", newEmployer.getEmpid());
+
+	                return ResponseEntity.ok(responseBody);
+	            }
+	        } catch (Exception e) {
+	            // Handle any errors and return an appropriate error response
+	            Map<String, Object> errorResponse = new HashMap<>();
+	            errorResponse.put("error", "Employer creation and login failed");
+	            errorResponse.put("message", e.getMessage());
+	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+	        }
+	    }
+
+	    // Create a new Employer (similar to createUser)
+	    public Employer createEmployer(String empmailid, boolean verified) {
+	        Employer newEmployer = new Employer();
+	        newEmployer.setEmpmailid(empmailid);
+	        newEmployer.setVerifiedemp(verified);
+
+	        // Generate an employer ID, similar to your User ID generation
+	        // Generate a UUID for the new user
+	        String uuid = UUID.randomUUID().toString();
+	        // Remove hyphens and special symbols
+	        uuid = uuid.replaceAll("-", "");
+	        newEmployer.setEmpid(uuid);
+	        // Perform the necessary operations to save the employer to your database.
+	        // You might need to use JPA, Hibernate, or your database's API here.
+
+	        // After saving the employer, you should return the saved employer entity.
+	        return ed.save(newEmployer);
+	    }
 }
