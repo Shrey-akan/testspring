@@ -75,5 +75,34 @@ public class ApplyController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
 	    }
 	}
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/updateProfileUpdate")
+	public ResponseEntity<?> updateProfileUpdate(@RequestBody ApplyJob applyJob) {
+	    try {
+	        // Retrieve the ApplyJob entity from the database using its UID
+	        ApplyJob existingApplyJob = apd.findByJuid(applyJob.getJuid());
+
+	        if (existingApplyJob != null) {
+	            // Update the profileupdate field with the new value
+	            existingApplyJob.setProfileupdate(applyJob.getProfileupdate());
+
+	            // Save the updated ApplyJob entity
+	            ApplyJob updatedApplyJob = apd.save(existingApplyJob);
+
+	            return ResponseEntity.ok(updatedApplyJob);
+	        } else {
+	            // ApplyJob with the provided UID not found
+	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("ApplyJob not found for UID: " + applyJob.getJuid());
+	        }
+	    } catch (DataAccessException e) {
+	        // Handle database-related exceptions (e.g., constraint violations)
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error occurred: " + e.getMessage());
+	    } catch (Exception e) {
+	        // Handle any other exceptions that may occur
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
+	    }
+	}
 
 }

@@ -147,7 +147,10 @@ public class UserController {
             if (existingUserOptional.isPresent()) {
                 // If it exists, update the existing record
                 User existingUser = existingUserOptional.get();
-                
+                // Update the 'profile' field if it's not null in the request
+                if (updatedUser.getProfile() != null) {
+                    existingUser.setProfile(updatedUser.getProfile());
+                }
                 // Update the fields you want to change, but only if they are not null in the request
                 if (updatedUser.getUserName() != null) {
                     existingUser.setUserName(updatedUser.getUserName());

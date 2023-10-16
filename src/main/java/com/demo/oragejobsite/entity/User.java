@@ -26,13 +26,18 @@ private String userName;
    private String userstate;
    private String usercity;
    private boolean verified;
+   private String profile;
+   
 public User() {
 	super();
 	// TODO Auto-generated constructor stub
 }
+
+
+
 public User(String uid, String userName, String userFirstName, String userLastName, String userPassword,
 		String companyuser, String websiteuser, String userphone, String usercountry, String userstate, String usercity,
-		boolean verified) {
+		boolean verified, String profile) {
 	super();
 	this.uid = uid;
 	this.userName = userName;
@@ -46,7 +51,10 @@ public User(String uid, String userName, String userFirstName, String userLastNa
 	this.userstate = userstate;
 	this.usercity = usercity;
 	this.verified = verified;
+	this.profile = profile;
 }
+
+
 
 public String getUid() {
 	return uid;
@@ -127,6 +135,19 @@ public boolean isVerified() {
 public void setVerified(boolean verified) {
 	this.verified = verified;
 }
+
+
+
+public String getProfile() {
+	return profile;
+}
+
+
+
+public void setProfile(String profile) {
+	this.profile = profile;
+}
+
 
 }
 

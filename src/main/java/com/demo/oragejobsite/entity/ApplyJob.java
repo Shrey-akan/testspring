@@ -31,6 +31,7 @@ public class ApplyJob {
 	private String juexpecsalary;
 	private String empid;
 	private String uid;
+	private String profileupdate;
 	
 	
 	public ApplyJob() {	
@@ -39,10 +40,13 @@ public class ApplyJob {
 	}
 
 	
+	
+
+
 	public ApplyJob(String juid, String juname, String jumail, String jucompny, String jutitle, String juresume,
 			String jurelocation, String jueducation, String juexperience, String juexpinjava, String juexpjsp,
 			String juinterviewdate, String jujavavalid, String jujobtitle, String jucompanyname, String description,
-			Long juphone, String julastsal, String juexpecsalary, String empid, String uid) {
+			Long juphone, String julastsal, String juexpecsalary, String empid, String uid, String profileupdate) {
 		super();
 		this.juid = juid;
 		this.juname = juname;
@@ -65,7 +69,11 @@ public class ApplyJob {
 		this.juexpecsalary = juexpecsalary;
 		this.empid = empid;
 		this.uid = uid;
+		this.profileupdate = profileupdate;
 	}
+
+
+
 
 
 	public String getJuid() {
@@ -219,6 +227,22 @@ public class ApplyJob {
 
 	public void setUid(String uid) {
 		this.uid = uid;
+	}
+
+
+
+
+
+	public String getProfileupdate() {
+		return profileupdate;
+	}
+
+
+
+
+
+	public void setProfileupdate(String profileupdate) {
+		this.profileupdate = profileupdate;
 	}
 	
 	
