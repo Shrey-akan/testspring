@@ -30,7 +30,7 @@ import com.demo.oragejobsite.entity.Employer;
 import com.demo.oragejobsite.entity.User;
 import com.demo.oragejobsite.util.JwtTokenUtil;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://job4jobless.com")
 @RestController
 public class EmployerController {
 	@Autowired
@@ -62,7 +62,7 @@ public class EmployerController {
     }
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/insertEmployer")
 	public ResponseEntity<Object> insertEmployer(@RequestBody Employer emp) {
 	    try {
@@ -109,7 +109,7 @@ public class EmployerController {
 	
 	
 	//Fetch Employer Details
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchemployer")
 	public ResponseEntity<List<Employer>> fetchemployer() {
 	    try {
@@ -130,7 +130,7 @@ public class EmployerController {
 	
 	
 	//update employer
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/updateEmployee")
 	public ResponseEntity<?> updateEmployee(@RequestBody Employer updatedEmployer) {
 	    try {
@@ -196,7 +196,7 @@ public class EmployerController {
 
 	
 	
-	@CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/employerLoginCheck")
 	public ResponseEntity<?> employerLoginCheck(@RequestBody Employer employer, HttpServletResponse response) {
 	    try {
@@ -247,7 +247,7 @@ public class EmployerController {
 
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/logincheckemp")
 	public ResponseEntity<?> logincheckemp(@RequestBody Employer e12, HttpServletResponse response) {
 	    try {
@@ -302,7 +302,7 @@ public class EmployerController {
 	}
 
 
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/verifyEmployer")
 	public ResponseEntity<Object> verifyEmployer(@RequestBody Map<String, String> request) {
 	    try {
@@ -334,7 +334,7 @@ public class EmployerController {
 	    }
 	}
 
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@DeleteMapping("/deleteEmployer/{empid}")
 	public ResponseEntity<?> deleteEmployer(@PathVariable String empid) {
 	    try {
@@ -358,7 +358,7 @@ public class EmployerController {
 
 	
 
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/resetPasswordEmp")
 	public ResponseEntity<Boolean> resetPasswordEmp(@RequestBody Map<String, String> request) {
 
@@ -424,7 +424,7 @@ public class EmployerController {
 
 	}
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/resetPasswordEmpverify")
 	public ResponseEntity<Boolean> resetPasswordEmpverify(@RequestBody Map<String, String> request) {
 	    try {
@@ -454,7 +454,7 @@ public class EmployerController {
 	}
 
 
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @GetMapping("/checkEmployer")
     public ResponseEntity<Object> checkEmployer(@RequestParam String empmailid) {
         try {
@@ -474,7 +474,7 @@ public class EmployerController {
         }
     }
 
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/logoutEmployer")
     public ResponseEntity<Boolean> logoutEmployer(HttpServletResponse response) {
         try {
@@ -498,7 +498,7 @@ public class EmployerController {
     }
 
 
-	   @CrossOrigin(origins = "http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	    @PostMapping("/createOrGetEmployer")
 	    public ResponseEntity<Map<String, Object>> createOrGetEmployer(@RequestBody String empmailid, HttpServletResponse response) {
 	        try {

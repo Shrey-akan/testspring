@@ -30,7 +30,7 @@ import com.demo.oragejobsite.util.JwtTokenUtil;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://job4jobless.com")
 @RestController
 public class UserController {
 
@@ -64,7 +64,7 @@ public class UserController {
 	
 	
 	//Insert User And Also Check if the user already exist in the database 
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/insertusermail")
 	public ResponseEntity<Object> insertusermail(@RequestBody User c1) {
 	    try {
@@ -114,7 +114,7 @@ public class UserController {
 
 
 	//fetch user data
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchuser")
 	public ResponseEntity<List<User>> fetchuser() {
 	    try {
@@ -133,7 +133,7 @@ public class UserController {
 	}
 	
 	//Update User data
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestBody User updatedUser) {
         try {
@@ -207,7 +207,7 @@ public class UserController {
 	
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/logincheck")
 	public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
 	   try {
@@ -244,7 +244,7 @@ public class UserController {
 	    }
 	}
 
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/logincheckgmail")
 	public ResponseEntity<?> logincheckgmail(@RequestBody User c12, HttpServletResponse response) {
 	    try {
@@ -311,7 +311,7 @@ public class UserController {
     }
 	
     
-    @CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/verifyUser")
     public ResponseEntity<?> verifyUser(@RequestBody Map<String, String> request) {
         try {
@@ -343,7 +343,7 @@ public class UserController {
 
 
 	
-    @CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @DeleteMapping("/deleteUser/{uid}")
     public ResponseEntity<Object> deleteUserByUid(@PathVariable String uid) {
         try {
@@ -364,7 +364,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
         }
     }
-    @CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/resetPassword")
     public ResponseEntity<Boolean> resetPassword(@RequestBody Map<String, String> request) {
 
@@ -434,7 +434,7 @@ public class UserController {
 
     }
     
-    @CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/resetPasswordUser")
     public ResponseEntity<Boolean> resetPasswordUser(@RequestBody Map<String, String> request) {
         try {
@@ -464,7 +464,7 @@ public class UserController {
     }
 
     
-    @CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @GetMapping("/checkuser")
     public ResponseEntity<Object> checkUser(@RequestParam String userName) {
         try {
@@ -484,7 +484,7 @@ public class UserController {
         }
     }
     
-    @CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/logout")
     public ResponseEntity<Boolean> logout(HttpServletResponse response) {
         try {
@@ -506,7 +506,7 @@ public class UserController {
                 .body(false);
         }
     }
-    @CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins="https://job4jobless.com")
     @PostMapping("/createOrGetUser")
     public ResponseEntity<Map<String, Object>> createOrGetUser(@RequestBody String userName, HttpServletResponse response) {
         try {

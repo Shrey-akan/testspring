@@ -22,7 +22,7 @@ import com.demo.oragejobsite.entity.DirectConntact;
 import com.demo.oragejobsite.service.AdminService;
 
 @RestController
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins="https://job4jobless.com")
 public class AdminController {
 	@Autowired
 	private AdminDao admindao;
@@ -32,7 +32,7 @@ public class AdminController {
 	    public AdminController(AdminService adminService) {
 	        this.adminService = adminService;
 	    }
-	    @CrossOrigin(origins="http://localhost:4200")
+	    @CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/insertadmin")
 	public ResponseEntity<Object> insertadmin(@RequestBody Admin admin) {
 	    try {
@@ -61,7 +61,7 @@ public class AdminController {
 	    }
 	}
 	
-	    @CrossOrigin(origins="http://localhost:4200")
+	    @CrossOrigin(origins="https://job4jobless.com")
 	@GetMapping("/fetchadmin")
 	public ResponseEntity<List<Admin>> fetchadmin() {
 	    try {
@@ -73,7 +73,7 @@ public class AdminController {
 	    }
 	}
 	
-	    @CrossOrigin(origins="http://localhost:4200")
+	    @CrossOrigin(origins="https://job4jobless.com")
 	@PostMapping("/admin/logincheck")
     public ResponseEntity<?> adminLoginCheck(@RequestBody Admin admin, HttpServletResponse response) {
         String adminMail = admin.getAdminMail();
