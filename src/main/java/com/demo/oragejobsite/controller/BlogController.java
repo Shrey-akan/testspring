@@ -17,7 +17,7 @@ import com.demo.oragejobsite.service.BlogService;
 import java.io.IOException;
 import java.util.List;
 
-@CrossOrigin(origins="https://job4jobless.com")
+@CrossOrigin(origins="http://localhost:4200")
 @RestController
 public class BlogController {
 
@@ -37,7 +37,7 @@ public class BlogController {
 //        return ResponseEntity.ok(blogs);
 //    }
 
-	    @CrossOrigin(origins="https://job4jobless.com")
+	    @CrossOrigin(origins="http://localhost:4200")
     @PostMapping("/createBlog")
     public ResponseEntity<?> createBlog(@RequestBody Blogs blog) {
         // Delegate the saving of the blog to the service layer
