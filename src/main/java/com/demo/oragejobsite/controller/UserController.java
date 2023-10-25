@@ -21,14 +21,25 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import io.jsonwebtoken.security.Keys;
+import com.demo.oragejobsite.dao.RefreshTokenRepository;
 import com.demo.oragejobsite.dao.UserDao;
 import com.demo.oragejobsite.entity.Employer;
+import com.demo.oragejobsite.entity.RefreshToken;
 import com.demo.oragejobsite.entity.User;
 import com.demo.oragejobsite.util.JwtTokenUtil;
+import com.demo.oragejobsite.util.TokenProvider;
+
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Date;
 
 @CrossOrigin(origins="http://localhost:4200")
 @RestController
@@ -36,9 +47,25 @@ public class UserController {
 
 	@Autowired
 	private UserDao ud;
+	
+	
+
+	
 	@Autowired
     private JwtTokenUtil jwtTokenUtil;
 	
+
+	
+	// Generate a secure key for HS256 algorithm
+	private final byte[] refreshTokenSecret = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
+	 private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	 private final TokenProvider tokenProvider; // Inject your TokenProvider here
+	    private final RefreshTokenRepository refreshTokenRepository;
+	    @Autowired
+	    public UserController(TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository) {
+	        this.tokenProvider = tokenProvider;
+	        this.refreshTokenRepository = refreshTokenRepository;
+	    }
 	private static  String hashPassword(String password) {
         try {
             // Create a MessageDigest instance for SHA-256
@@ -206,43 +233,80 @@ public class UserController {
 	
 	
 	
-	
-	@CrossOrigin(origins="http://localhost:4200")
-	@PostMapping("/logincheck")
-	public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
-	   try {
-		   String checkemail = c12.getUserName();
-		    String checkpass = c12.getUserPassword();
-		    checkpass = hashPassword(checkpass);
 
-		    User checkmail = checkMailUser(checkemail, checkpass);
+@CrossOrigin(origins = "http://localhost:4200")
+@PostMapping("/logincheck")
+public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
+    try {
+        String checkemail = c12.getUserName();
+        String checkpass = c12.getUserPassword();
+        checkpass = hashPassword(checkpass); // Hash the password (implement the hashPassword method)
 
-		    if (checkmail != null) {
-		        // Create and set cookies here
-		        Cookie userCookie = new Cookie("user", checkemail);
-		        userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
-		        userCookie.setPath("/"); // Set the path to match your frontend
-		        response.addCookie(userCookie);
+        User checkmail = checkMailUser(checkemail, checkpass); // Check user credentials
 
-		        // Generate an access token
-		        String accessToken = jwtTokenUtil.generateToken(checkemail);
+        if (checkmail != null) {
+            // Create and set cookies here
+            Cookie userCookie = new Cookie("user", checkemail);
+            userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+            userCookie.setPath("/"); // Set the path to match your frontend
+            response.addCookie(userCookie);
 
-		        // Create a response object that includes the access token and UID
-		        Map<String, Object> responseBody = new HashMap<>();
-		        responseBody.put("accessToken", accessToken);
-		        responseBody.put("uid", checkmail.getUid());
+            // Generate and set a refresh token
+            // Generate and set a refresh token
+            String refreshToken = tokenProvider.generateRefreshToken(checkemail);
+            // Save the refresh token in the database
+            RefreshToken refreshTokenEntity = new RefreshToken();
+            refreshTokenEntity.setTokenId(refreshToken);
+            refreshTokenEntity.setUsername(checkmail.getUid());
+            // Set the expiry date using TokenProvider
+            refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+            refreshTokenRepository.save(refreshTokenEntity);
 
-		        return ResponseEntity.ok(responseBody);
-		    } else {
-		        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-		    }
-	   }
-	   catch (Exception e) {
-	        // Handle any exceptions that may occur
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null); // You can customize the error response as needed
-	    }
-	}
+            // Generate and set an access token using TokenProvider
+            String accessToken = tokenProvider.generateAccessToken(checkmail.getUid());
+
+            // Create a response object that includes the access token and refresh token
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("accessToken", accessToken);
+            responseBody.put("refreshToken", refreshToken);
+            responseBody.put("uid", checkmail.getUid());
+
+            return ResponseEntity.ok(responseBody);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+        }
+    } catch (Exception e) {
+        // Handle any exceptions that may occur
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request");
+    }
+}
+
+
+@CrossOrigin(origins = "http://localhost:4200")
+@PostMapping("/refreshToken")
+public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
+    try {
+        // Validate the provided refresh token and extract the username (e.g., "uid")
+        String username = tokenProvider.validateAndExtractUsernameFromRefreshToken(refreshToken);
+
+        if (username != null) {
+            // Generate a new access token
+            String newAccessToken = tokenProvider.generateAccessToken(username);
+
+            // Return the new access token
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("accessToken", newAccessToken);
+
+            return ResponseEntity.ok(responseBody);
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+}
 
 	@CrossOrigin(origins="http://localhost:4200")
 	@PostMapping("/logincheckgmail")
@@ -265,12 +329,23 @@ public class UserController {
 	                userCookie.setPath("/"); // Set the path to match your frontend
 	                response.addCookie(userCookie);
 
-	                // Generate an access token
-	                String accessToken = jwtTokenUtil.generateToken(checkemail);
+	                // Generate and set a refresh token
+	                String refreshToken = tokenProvider.generateRefreshToken(checkemail);
+	                // Save the refresh token in the database
+	                RefreshToken refreshTokenEntity = new RefreshToken();
+	                refreshTokenEntity.setTokenId(refreshToken);
+	                refreshTokenEntity.setUsername(user.getUid());
+	                // Set the expiry date using TokenProvider
+	                refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+	                refreshTokenRepository.save(refreshTokenEntity);
 
-	                // Create a response object that includes the access token and UID
+	                // Generate and set an access token using TokenProvider
+	                String accessToken = tokenProvider.generateAccessToken(user.getUid());
+
+	                // Create a response object that includes the access token and refresh token
 	                Map<String, Object> responseBody = new HashMap<>();
 	                responseBody.put("accessToken", accessToken);
+	                responseBody.put("refreshToken", refreshToken);
 	                responseBody.put("uid", user.getUid());
 
 	                return ResponseEntity.ok(responseBody);
@@ -483,30 +558,19 @@ public class UserController {
                 .body("{\"message\": \"An error occurred while processing your request.\"}");
         }
     }
-    
-    @CrossOrigin(origins="http://localhost:4200")
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/logout")
-    public ResponseEntity<Boolean> logout(HttpServletResponse response) {
-        try {
-            // Create a new cookie with the same name as your authentication token cookie
-            Cookie userCookie = new Cookie("user", null);
-            userCookie.setMaxAge(0); // Set the cookie's max age to 0, which will remove it
-            userCookie.setPath("/"); // Make sure the path matches the one used for authentication cookies
-            
-            // Add the cookie to the response to remove it from the client-side
-            response.addCookie(userCookie);
-
-            // Optionally, you can also invalidate the JWT token on the client-side
-            // by asking the client to discard the token.
-
-            return ResponseEntity.ok(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(false);
+    public ResponseEntity<String> logout(@RequestParam String refreshToken) {
+        RefreshToken token = refreshTokenRepository.findByTokenId(refreshToken);
+        if (token != null) {
+            refreshTokenRepository.delete(token);
+            return ResponseEntity.ok("Logout successful");
         }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Refresh token not found");
     }
-    @CrossOrigin(origins="http://localhost:4200")
+
+
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping("/createOrGetUser")
     public ResponseEntity<Map<String, Object>> createOrGetUser(@RequestBody String userName, HttpServletResponse response) {
         try {
@@ -520,30 +584,61 @@ public class UserController {
                 // User exists, return user data and access token
                 String accessToken = jwtTokenUtil.generateToken(existingUser.getUserName());
 
+                // Generate and set a refresh token
+                String refreshToken = tokenProvider.generateRefreshToken(userName);
+
+                // Save the refresh token in the database
+                RefreshToken refreshTokenEntity = new RefreshToken();
+                refreshTokenEntity.setTokenId(refreshToken);
+                refreshTokenEntity.setUsername(existingUser.getUid());
+                // Set the expiry date using TokenProvider
+                refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+                refreshTokenRepository.save(refreshTokenEntity);
+
                 Map<String, Object> responseBody = new HashMap<>();
                 responseBody.put("userName", userName);
                 responseBody.put("accessToken", accessToken);
+                responseBody.put("refreshToken", refreshToken);
                 responseBody.put("uid", existingUser.getUid());
+
+                // Set a user cookie (if needed)
+                Cookie userCookie = new Cookie("user", userName);
+                userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+                userCookie.setPath("/"); // Set the path to match your frontend
+                response.addCookie(userCookie);
 
                 return ResponseEntity.ok(responseBody);
             } else {
                 // User doesn't exist, create a new user
                 User newUser = createUser(userName, true);
 
-                // Set a user cookie
-                Cookie userCookie = new Cookie("user", userName);
-                userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
-                userCookie.setPath("/"); // Set the path to match your frontend
-                response.addCookie(userCookie);
+             // Generate and set a refresh token
+                String refreshToken = tokenProvider.generateRefreshToken(userName);
+
+
+                // Save the refresh token in the database
+                RefreshToken refreshTokenEntity = new RefreshToken();
+                refreshTokenEntity.setTokenId(refreshToken);
+                refreshTokenEntity.setUsername(newUser.getUid());
+                // Set the expiry date using TokenProvider
+                refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+                refreshTokenRepository.save(refreshTokenEntity);
 
                 // Generate an access token
                 String accessToken = jwtTokenUtil.generateToken(userName);
 
-                // Create a response object that includes the access token and UID
+                // Create a response object that includes the access token and refresh token
                 Map<String, Object> responseBody = new HashMap<>();
                 responseBody.put("userName", userName);
                 responseBody.put("accessToken", accessToken);
+                responseBody.put("refreshToken", refreshToken);
                 responseBody.put("uid", newUser.getUid());
+
+                // Set a user cookie (if needed)
+                Cookie userCookie = new Cookie("user", userName);
+                userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+                userCookie.setPath("/"); // Set the path to match your frontend
+                response.addCookie(userCookie);
 
                 return ResponseEntity.ok(responseBody);
             }
@@ -555,6 +650,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
     public User createUser(String userName, boolean verified) {
         User newUser = new User();
         newUser.setUserName(userName);

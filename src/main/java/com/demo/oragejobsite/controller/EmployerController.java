@@ -12,6 +12,8 @@ import java.util.UUID;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
@@ -26,9 +28,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.oragejobsite.dao.EmployerDao;
+import com.demo.oragejobsite.dao.RefreshTokenRepository;
 import com.demo.oragejobsite.entity.Employer;
+import com.demo.oragejobsite.entity.RefreshToken;
 import com.demo.oragejobsite.entity.User;
 import com.demo.oragejobsite.util.JwtTokenUtil;
+import com.demo.oragejobsite.util.TokenProvider;
+
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 
 @CrossOrigin(origins="http://localhost:4200")
 @RestController
@@ -37,7 +45,20 @@ public class EmployerController {
 	private EmployerDao ed;
 	@Autowired
     private JwtTokenUtil jwtTokenUtil;
+
 	
+	// Generate a secure key for HS256 algorithm
+	private final byte[] refreshTokenSecret = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
+	 private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+	 private final TokenProvider tokenProvider; // Inject your TokenProvider here
+	    private final RefreshTokenRepository refreshTokenRepository;
+	    
+	    @Autowired
+	    public EmployerController(TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository) {
+	        this.tokenProvider = tokenProvider;
+	        this.refreshTokenRepository = refreshTokenRepository;
+	    }
+	    
 	private static  String hashPassword(String password) {
         try {
             // Create a MessageDigest instance for SHA-256
@@ -219,12 +240,22 @@ public class EmployerController {
 
 	                // Generate an access token for the employer
 	                String accessToken = jwtTokenUtil.generateToken(checkEmail);
+	                // Generate and set a refresh token
+	                String refreshToken = tokenProvider.generateRefreshToken(checkEmail);
+	                // Save the refresh token in the database
+	                RefreshToken refreshTokenEntity = new RefreshToken();
+	                refreshTokenEntity.setTokenId(refreshToken);
+	                refreshTokenEntity.setUsername(foundEmployer.getEmpid()); // Assuming you have an ID field in your Employer entity
+	                // Set the expiry date using TokenProvider
+	                refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+	                refreshTokenRepository.save(refreshTokenEntity);
 
-	                // Create a response object that includes the access token and employer data
+	                // Create a response object that includes the access token, refresh token, and employer data
 	                Map<String, Object> responseBody = new HashMap<>();
 	                responseBody.put("accessToken", accessToken);
-	                responseBody.put("empid", foundEmployer.getEmpid()); // Assuming you have an ID field in your Employer entity
-	                System.out.println("value coming from found employer "+foundEmployer.getEmpid());
+	                responseBody.put("refreshToken", refreshToken);
+	                responseBody.put("empid", foundEmployer.getEmpid());
+
 	                return ResponseEntity.ok(responseBody);
 	            } else {
 	                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch employer data");
@@ -238,6 +269,7 @@ public class EmployerController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 	    }
 	}
+
 
 	public boolean checkIfEmailExists(String email) {
 	    // Use the EmployerDao (or your equivalent) to check if the email exists
@@ -261,20 +293,32 @@ public class EmployerController {
 	            // Create and set cookies here
 	            Cookie employerCookie = new Cookie("emp", checkmail.toString());
 	            // Set the domain to match your frontend (e.g., localhost)
-//	            employerCookie.setDomain("localhost");
+//	          
 	            employerCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
 	            employerCookie.setPath("/");
 	            response.addCookie(employerCookie);
-	            // Generate an access token
-	            String accessToken = jwtTokenUtil.generateToken(checkemail);
-
-	            // Create a response object that includes the access token and UID
-	            Map<String, Object> responseBody = new HashMap<>();
-	            responseBody.put("accessToken", accessToken);
-	            responseBody.put("empid", checkmail.getEmpid());
+	         
 	            
-	            // Return the response as JSON
-	            return ResponseEntity.ok(responseBody);
+	            // Generate an access token for the employer
+                String accessToken = jwtTokenUtil.generateToken(checkemail);
+                // Generate and set a refresh token
+                String refreshToken = tokenProvider.generateRefreshToken(checkemail);
+                // Save the refresh token in the database
+                RefreshToken refreshTokenEntity = new RefreshToken();
+                refreshTokenEntity.setTokenId(refreshToken);
+                refreshTokenEntity.setUsername(checkmail.getEmpid()); // Assuming you have an ID field in your Employer entity
+                // Set the expiry date using TokenProvider
+                refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+                refreshTokenRepository.save(refreshTokenEntity);
+
+                // Create a response object that includes the access token, refresh token, and employer data
+                Map<String, Object> responseBody = new HashMap<>();
+                responseBody.put("accessToken", accessToken);
+                responseBody.put("refreshToken", refreshToken);
+                responseBody.put("empid", checkmail.getEmpid());
+
+
+                return ResponseEntity.ok(responseBody);
 	        }
 
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
@@ -474,76 +518,102 @@ public class EmployerController {
         }
     }
 
-	@CrossOrigin(origins="http://localhost:4200")
-    @PostMapping("/logoutEmployer")
-    public ResponseEntity<Boolean> logoutEmployer(HttpServletResponse response) {
-        try {
-            // Create a new cookie with the same name as your employer authentication token cookie
-            Cookie employerCookie = new Cookie("emp", null);
-            employerCookie.setMaxAge(0); // Set the cookie's max age to 0, which will remove it
-            employerCookie.setPath("/"); // Make sure the path matches the one used for employer authentication cookies
-
-            // Add the cookie to the response to remove it from the client-side
-            response.addCookie(employerCookie);
-
-            // Optionally, you can also invalidate the JWT token on the client-side
-            // by asking the client to discard the token.
-
-            return ResponseEntity.ok(true);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(false);
-        }
-    }
-
-
-	@CrossOrigin(origins="http://localhost:4200")
-	    @PostMapping("/createOrGetEmployer")
-	    public ResponseEntity<Map<String, Object>> createOrGetEmployer(@RequestBody String empmailid, HttpServletResponse response) {
-	        try {
-	            // Check if the employer with the provided email (empmailid) exists
-	            Employer existingEmployer = ed.findByEmpmailid(empmailid);
-
-	            if (existingEmployer != null) {
-	                // Employer exists, return employer data and access token
-	                String accessToken = jwtTokenUtil.generateToken(empmailid);
-
-	                Map<String, Object> responseBody = new HashMap<>();
-	                responseBody.put("empmailid", empmailid);
-	                responseBody.put("accessToken", accessToken);
-	                responseBody.put("empid", existingEmployer.getEmpid());
-   
-	                return ResponseEntity.ok(responseBody);
-	            } else {
-	                // Employer doesn't exist, create a new employer
-	                Employer newEmployer = createEmployer(empmailid, true);
-
-	                // Set an employer cookie
-	                Cookie employerCookie = new Cookie("emp", empmailid);
-	                employerCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
-	                employerCookie.setPath("/"); // Set the path to match your frontend
-	                response.addCookie(employerCookie);
-
-	                // Generate an access token for the employer
-	                String accessToken = jwtTokenUtil.generateToken(empmailid);
-
-	                // Create a response object that includes the access token and empid
-	                Map<String, Object> responseBody = new HashMap<>();
-	                responseBody.put("empmailid", empmailid);
-	                responseBody.put("accessToken", accessToken);
-	                responseBody.put("empid", newEmployer.getEmpid());
-
-	                return ResponseEntity.ok(responseBody);
-	            }
-	        } catch (Exception e) {
-	            // Handle any errors and return an appropriate error response
-	            Map<String, Object> errorResponse = new HashMap<>();
-	            errorResponse.put("error", "Employer creation and login failed");
-	            errorResponse.put("message", e.getMessage());
-	            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/logoutEmployer")
+	public ResponseEntity<String> logoutEmployer(@RequestParam String refreshToken) {
+		
+		  RefreshToken token = refreshTokenRepository.findByTokenId(refreshToken);
+	        if (token != null) {
+	            refreshTokenRepository.delete(token);
+	            return ResponseEntity.ok("Logout successful");
 	        }
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Refresh token not found");
+	}
+
+
+	@CrossOrigin(origins = "http://localhost:4200")
+	@PostMapping("/createOrGetEmployer")
+	public ResponseEntity<Map<String, Object>> createOrGetEmployer(@RequestBody String empmailid, HttpServletResponse response) {
+	    try {
+	        // Check if the employer with the provided email (empmailid) exists
+	        Employer existingEmployer = ed.findByEmpmailid(empmailid);
+
+	        if (existingEmployer != null) {
+	            // Employer exists, return employer data and access token
+	            String accessToken = jwtTokenUtil.generateToken(empmailid);
+
+	            // Generate and set a refresh token
+	            String refreshToken = tokenProvider.generateRefreshToken(empmailid);
+
+	            // Save the refresh token in the database
+	            RefreshToken refreshTokenEntity = new RefreshToken();
+	            refreshTokenEntity.setTokenId(refreshToken);
+	            refreshTokenEntity.setUsername(existingEmployer.getEmpid());
+	            // Set the expiry date using TokenProvider
+	            refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+	            refreshTokenRepository.save(refreshTokenEntity);
+
+	            Map<String, Object> responseBody = new HashMap<>();
+	            responseBody.put("empmailid", empmailid);
+	            responseBody.put("accessToken", accessToken);
+	            responseBody.put("refreshToken", refreshToken);
+	            responseBody.put("empid", existingEmployer.getEmpid());
+
+	            // Set a user cookie (if needed)
+	            Cookie userCookie = new Cookie("emp", empmailid);
+	            userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+	            userCookie.setPath("/"); // Set the path to match your frontend
+	            response.addCookie(userCookie);
+
+	            return ResponseEntity.ok(responseBody);
+	        } else {
+	            // Employer doesn't exist, create a new employer
+	            Employer newEmployer = createEmployer(empmailid, true);
+
+	            // Set an employer cookie
+	            Cookie employerCookie = new Cookie("emp", empmailid);
+	            employerCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+	            employerCookie.setPath("/"); // Set the path to match your frontend
+	            response.addCookie(employerCookie);
+
+	            // Generate an access token for the employer
+	            String accessToken = jwtTokenUtil.generateToken(empmailid);
+
+	            // Generate and set a refresh token
+	            String refreshToken = tokenProvider.generateRefreshToken(empmailid);
+
+	            // Save the refresh token in the database
+	            RefreshToken refreshTokenEntity = new RefreshToken();
+	            refreshTokenEntity.setTokenId(refreshToken);
+	            refreshTokenEntity.setUsername(newEmployer.getEmpid());
+	            // Set the expiry date using TokenProvider
+	            refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+	            refreshTokenRepository.save(refreshTokenEntity);
+
+	            // Create a response object that includes the access token and refresh token
+	            Map<String, Object> responseBody = new HashMap<>();
+	            responseBody.put("empmailid", empmailid);
+	            responseBody.put("accessToken", accessToken);
+	            responseBody.put("refreshToken", refreshToken);
+	            responseBody.put("empid", newEmployer.getEmpid());
+
+	            // Set a user cookie (if needed)
+	            Cookie userCookie = new Cookie("emp", empmailid);
+	            userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+	            userCookie.setPath("/"); // Set the path to match your frontend
+	            response.addCookie(userCookie);
+
+	            return ResponseEntity.ok(responseBody);
+	        }
+	    } catch (Exception e) {
+	        // Handle any errors and return an appropriate error response
+	        Map<String, Object> errorResponse = new HashMap<>();
+	        errorResponse.put("error", "Employer creation and login failed");
+	        errorResponse.put("message", e.getMessage());
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
 	    }
+	}
+
 
 	    // Create a new Employer (similar to createUser)
 	    public Employer createEmployer(String empmailid, boolean verified) {
