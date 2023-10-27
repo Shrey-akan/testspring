@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.ApplyDao;
 import com.demo.oragejobsite.entity.ApplyJob;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins = "https://job4jobless.com")
 @RestController
 public class ApplyController {
 	@Autowired
@@ -25,7 +25,7 @@ public class ApplyController {
 	
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins = "https://job4jobless.com")
 	@PostMapping("/insertapplyjob")
 	public ResponseEntity<?> insertapplyjob(@RequestBody ApplyJob applyjob) {
 	    try {
@@ -57,7 +57,7 @@ public class ApplyController {
 
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins = "https://job4jobless.com")
 	@GetMapping("/fetchapplyform")
 	public ResponseEntity<?> fetchapplyform() {
 	    try {
@@ -75,7 +75,7 @@ public class ApplyController {
 	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
 	    }
 	}
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins = "https://job4jobless.com")
 	@PostMapping("/updateProfileUpdate")
 	public ResponseEntity<?> updateProfileUpdate(@RequestBody ApplyJob applyJob) {
 	    try {

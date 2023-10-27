@@ -1,38 +1,43 @@
 package com.demo.oragejobsite.util;
+
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 
 import java.security.SecureRandom;
-import java.util.Base64;
+import java.security.SignatureException;
 import java.util.Date;
 import java.util.UUID;
 
 import javax.crypto.SecretKey;
+import java.security.GeneralSecurityException;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class TokenProvider {
     private static final long REFRESH_TOKEN_EXPIRATION_TIME = 15 * 24 * 60 * 60 * 1000; // 15 days in milliseconds
-    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 15 * 60 * 1000; // 15 minutes in milliseconds
+    private static final long ACCESS_TOKEN_EXPIRATION_TIME = 15 * 60 * 24 * 1000; // 15 minutes in milliseconds
 
-    private SecretKey refreshTokenSecret; // Use SecretKey instead of a String
+    @Value("${jwt.secret}")
+    private String jwtSecretValue;
 
+    private SecretKey jwtSecret;
+
+    public TokenProvider(String jwtSecretValue) {
+        // Initialize the SecretKey from the property value
+        jwtSecret = Keys.hmacShaKeyFor(jwtSecretValue.getBytes());
+    }
+
+   
     public TokenProvider() {
-        // Initialize the SecretKey with a random key
-        this.refreshTokenSecret = generateRandomSecretKey();
+        // Initialize the SecretKey with a default secret value
+        this("jjbjhgbkgigcuol6354623g23c4y2t42werfd347637648c472i34723847823x4y378i78378943k4iyh23c4847y6238c4y6i");
     }
-
-    private SecretKey generateRandomSecretKey() {
-        SecureRandom secureRandom = new SecureRandom();
-        byte[] randomBytes = new byte[32]; // 32 bytes will be base64 encoded to 64 characters
-        secureRandom.nextBytes(randomBytes);
-        return Keys.hmacShaKeyFor(randomBytes); // Create SecretKey from randomBytes
-    }
-
+    
+    
     public String generateRefreshToken(String username) {
         Date expiryDate = new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_TIME);
         String tokenId = UUID.randomUUID().toString();
@@ -40,7 +45,7 @@ public class TokenProvider {
         return Jwts.builder()
             .setSubject(username)
             .setExpiration(expiryDate)
-            .signWith(refreshTokenSecret, SignatureAlgorithm.HS256)
+            .signWith(jwtSecret, SignatureAlgorithm.HS256)
             .setId(tokenId)
             .compact();
     }
@@ -48,22 +53,13 @@ public class TokenProvider {
     public String validateAndExtractUsernameFromRefreshToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
-                .setSigningKey(refreshTokenSecret)
+                .setSigningKey(jwtSecret)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
 
             String username = claims.getSubject();
             return username;
-        } catch (io.jsonwebtoken.ExpiredJwtException e) {
-            e.printStackTrace();
-            return null;
-        } catch (io.jsonwebtoken.MalformedJwtException e) {
-            e.printStackTrace();
-            return null;
-        } catch (io.jsonwebtoken.SignatureException e) {
-            e.printStackTrace();
-            return null;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -76,18 +72,19 @@ public class TokenProvider {
         return Jwts.builder()
             .setSubject(uid)
             .setExpiration(expiryDate)
-            .signWith(refreshTokenSecret, SignatureAlgorithm.HS256) // Use refreshTokenSecret for signing
+            .signWith(jwtSecret, SignatureAlgorithm.HS256)
             .compact();
+        
+       
     }
 
     public java.sql.Date getExpirationDateFromRefreshToken(String refreshToken) {
         try {
-        	 Jws<Claims> jws = Jwts.parserBuilder()
-        	            .setSigningKey(refreshTokenSecret)
-        	            .build()
-        	            .parseClaimsJws(refreshToken);
-
-        	        Claims claims = jws.getBody();
+            Claims claims = Jwts.parserBuilder()
+                .setSigningKey(jwtSecret)
+                .build()
+                .parseClaimsJws(refreshToken)
+                .getBody();
 
             Date expirationDate = claims.getExpiration();
 
@@ -103,13 +100,49 @@ public class TokenProvider {
     }
 
     public SecretKey getRefreshTokenSecret() {
-        return refreshTokenSecret;
+        return jwtSecret;
     }
 
     public void setRefreshTokenSecret(SecretKey refreshTokenSecret) {
-        this.refreshTokenSecret = refreshTokenSecret;
+        this.jwtSecret = refreshTokenSecret;
     }
+    
+    
+    public boolean isAccessTokenValid(String accessToken) {
+        try {
+            // Parse the access token
+            Jwts.parserBuilder()
+                .setSigningKey(jwtSecret)
+                .build()
+                .parseClaimsJws(accessToken);
 
+            // If parsing is successful, the token is valid
+            return true;
+        } catch (Exception e) {
+            // Token is invalid or there was an error parsing it
+            return false;
+        }
+    }
+    
+    public boolean isRefreshTokenValid(String refreshToken) {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                .setSigningKey(jwtSecret)
+                .build()
+                .parseClaimsJws(refreshToken)
+                .getBody();
+
+            // Check if the token has not expired
+            if (!claims.getExpiration().before(new Date())) {
+                return true; // Refresh token is valid
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false; // Refresh token is invalid
+    }
     // You can add more methods or setters as needed.
 }
+
 

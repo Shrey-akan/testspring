@@ -41,32 +41,32 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Date;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins = "https://job4jobless.com")
 @RestController
 public class UserController {
 
-	@Autowired
-	private UserDao ud;
-	
-	
+@Autowired
+private UserDao ud;
 
-	
-	@Autowired
+
+
+
+@Autowired
     private JwtTokenUtil jwtTokenUtil;
-	
 
-	
-	// Generate a secure key for HS256 algorithm
-	private final byte[] refreshTokenSecret = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
-	 private static final Logger logger = LoggerFactory.getLogger(UserController.class);
-	 private final TokenProvider tokenProvider; // Inject your TokenProvider here
-	    private final RefreshTokenRepository refreshTokenRepository;
-	    @Autowired
-	    public UserController(TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository) {
-	        this.tokenProvider = tokenProvider;
-	        this.refreshTokenRepository = refreshTokenRepository;
-	    }
-	private static  String hashPassword(String password) {
+
+
+// Generate a secure key for HS256 algorithm
+private final byte[] refreshTokenSecret = Keys.secretKeyFor(SignatureAlgorithm.HS256).getEncoded();
+private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+private final TokenProvider tokenProvider; // Inject your TokenProvider here
+   private final RefreshTokenRepository refreshTokenRepository;
+   @Autowired
+   public UserController(TokenProvider tokenProvider, RefreshTokenRepository refreshTokenRepository) {
+       this.tokenProvider = tokenProvider;
+       this.refreshTokenRepository = refreshTokenRepository;
+   }
+private static  String hashPassword(String password) {
         try {
             // Create a MessageDigest instance for SHA-256
             MessageDigest md = MessageDigest.getInstance("SHA-256");
@@ -88,83 +88,82 @@ public class UserController {
             throw new RuntimeException("Error hashing password", e);
         }
     }
-	
-	
-	//Insert User And Also Check if the user already exist in the database 
-	@CrossOrigin(origins="http://localhost:4200")
-	@PostMapping("/insertusermail")
-	public ResponseEntity<Object> insertusermail(@RequestBody User c1) {
-	    try {
-	    	// Generate a random UUID as a string
-	        String randomString = UUID.randomUUID().toString();
 
-	        // Remove hyphens and special symbols
-	        randomString = randomString.replaceAll("-", "");
 
-	        // Set the randomString as the Juid for the ApplyJob
-	        c1.setUid(randomString);
+//Insert User And Also Check if the user already exist in the database
+@CrossOrigin(origins = "https://job4jobless.com")
+@PostMapping("/insertusermail")
+public ResponseEntity<Object> insertusermail(@RequestBody User c1) {
+   try {
+    // Generate a random UUID as a string
+       String randomString = UUID.randomUUID().toString();
+
+       // Remove hyphens and special symbols
+       randomString = randomString.replaceAll("-", "");
+
+       // Set the randomString as the Juid for the ApplyJob
+       c1.setUid(randomString);
             String pass=c1.getUserPassword();
             pass=hashPassword(pass);
-            
+           
             c1.setUserPassword(pass);
-	   
-	        // Set the initial value of 'verify' to false
-	        c1.setVerified(false);
+ 
+       // Set the initial value of 'verify' to false
+       c1.setVerified(false);
 
-	        // Check if the userName already exists in the database
-	        User existingUser = ud.findByUserName(c1.getUserName());
-
-	        if (existingUser != null) {
-	            // User with the same userName already exists, return a conflict response
-	            return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this username already exists");
-	        } else {
-	            // User with the userName doesn't exist, save the data
-	            ud.save(c1);
-	            System.out.println("User Created Successfully");
-	            return ResponseEntity.status(HttpStatus.CREATED).body(c1);
-	        }
-	    } catch (DataAccessException e) {
-	        // Handle database-related exceptions (e.g., unique constraint violation)
-	        // Log the exception message for debugging
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error occurred");
-	    } catch (Exception e) {
-	        // Handle any other exceptions that may occur
-	        // Log the exception message for debugging
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request");
-	    }
-	}
-
+       // Check if the userName already exists in the database
+       User existingUser = ud.findByUserName(c1.getUserName());
+       if (existingUser != null) {
+           // User with the same userName already exists, return a conflict response
+           return ResponseEntity.status(HttpStatus.CONFLICT).body("User with this username already exists");
+       } else {
+           // User with the userName doesn't exist, save the data
+           ud.save(c1);
+           System.out.println("User Created Successfully");
+           return ResponseEntity.status(HttpStatus.CREATED).body(c1);
+       }
+   } catch (DataAccessException e) {
+       // Handle database-related exceptions (e.g., unique constraint violation)
+       // Log the exception message for debugging
+       e.printStackTrace();
+       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Database error occurred");
+   } catch (Exception e) {
+       // Handle any other exceptions that may occur
+       // Log the exception message for debugging
+       e.printStackTrace();
+       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request");
+   }
+}
 
 
 
 
-	//fetch user data
-	@CrossOrigin(origins="http://localhost:4200")
-	@GetMapping("/fetchuser")
-	public ResponseEntity<List<User>> fetchuser() {
-	    try {
-	        List<User> users = ud.findAll();
-	        if (users.isEmpty()) {
-	            // Return a NOT FOUND response if no users are found
-	            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-	        } else {
-	            // Return a OK response with the list of users
-	            return ResponseEntity.ok(users);
-	        }
-	    } catch (Exception e) {
-	        // Handle any exceptions that may occur, and return a INTERNAL SERVER ERROR response
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
-	}
-	
-	//Update User data
-	@CrossOrigin(origins="http://localhost:4200")
+
+//fetch user data
+@CrossOrigin(origins = "https://job4jobless.com")
+@GetMapping("/fetchuser")
+public ResponseEntity<List<User>> fetchuser() {
+   try {
+       List<User> users = ud.findAll();
+       if (users.isEmpty()) {
+           // Return a NOT FOUND response if no users are found
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+       } else {
+           // Return a OK response with the list of users
+           return ResponseEntity.ok(users);
+       }
+   } catch (Exception e) {
+       // Handle any exceptions that may occur, and return a INTERNAL SERVER ERROR response
+       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+   }
+}
+
+//Update User data
+@CrossOrigin(origins = "https://job4jobless.com")
     @PostMapping("/updateUser")
     public ResponseEntity<?> updateUser(@RequestBody User updatedUser) {
         try {
-        	 String uid = updatedUser.getUid();
+        String uid = updatedUser.getUid();
              // Log the received UID for debugging
              System.out.println("Received UID: " + uid);
 
@@ -206,7 +205,7 @@ public class UserController {
                 if (updatedUser.getWebsiteuser() != null) {
                     existingUser.setWebsiteuser(updatedUser.getWebsiteuser());
                 }
-                
+               
                 // Update the 'verified' field if it's not null in the request
                 if (updatedUser.isVerified() != false) {
                     existingUser.setVerified(updatedUser.isVerified());
@@ -228,13 +227,13 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
         }
     }
-	
-	
-	
-	
-	
 
-@CrossOrigin(origins = "http://localhost:4200")
+
+
+
+
+
+@CrossOrigin(origins = "https://job4jobless.com")
 @PostMapping("/logincheck")
 public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse response) {
     try {
@@ -264,13 +263,15 @@ public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse r
 
             // Generate and set an access token using TokenProvider
             String accessToken = tokenProvider.generateAccessToken(checkmail.getUid());
-
+            System.out.println(refreshToken);
+            System.out.println(accessToken);
+            System.out.println("checking the value of refresh token and access token");
             // Create a response object that includes the access token and refresh token
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("accessToken", accessToken);
             responseBody.put("refreshToken", refreshToken);
             responseBody.put("uid", checkmail.getUid());
-
+            
             return ResponseEntity.ok(responseBody);
         } else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
@@ -283,91 +284,67 @@ public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse r
 }
 
 
-@CrossOrigin(origins = "http://localhost:4200")
-@PostMapping("/refreshToken")
-public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
-    try {
-        // Validate the provided refresh token and extract the username (e.g., "uid")
-        String username = tokenProvider.validateAndExtractUsernameFromRefreshToken(refreshToken);
 
-        if (username != null) {
-            // Generate a new access token
-            String newAccessToken = tokenProvider.generateAccessToken(username);
+@CrossOrigin(origins = "https://job4jobless.com")
+@PostMapping("/logincheckgmail")
+public ResponseEntity<?> logincheckgmail(@RequestBody User c12, HttpServletResponse response) {
+   try {
+       String checkemail = c12.getUserName();
 
-            // Return the new access token
-            Map<String, Object> responseBody = new HashMap<>();
-            responseBody.put("accessToken", newAccessToken);
+       // Check if the email exists in your database
+       boolean emailExists = checkIfEmailExists(checkemail);
 
-            return ResponseEntity.ok(responseBody);
-        } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid refresh token");
-        }
-    } catch (Exception e) {
-        e.printStackTrace();
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-    }
+       if (emailExists) {
+           // Fetch the user's UID by checking the email
+           Optional<User> userOptional = Optional.ofNullable(ud.findByUserName(checkemail));
+           if (userOptional.isPresent()) {
+               User user = userOptional.get();
+
+               // Create and set cookies here
+               Cookie userCookie = new Cookie("user", checkemail);
+               userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
+               userCookie.setPath("/"); // Set the path to match your frontend
+               response.addCookie(userCookie);
+
+               // Generate and set a refresh token
+               String refreshToken = tokenProvider.generateRefreshToken(checkemail);
+               // Save the refresh token in the database
+               RefreshToken refreshTokenEntity = new RefreshToken();
+               refreshTokenEntity.setTokenId(refreshToken);
+               refreshTokenEntity.setUsername(user.getUid());
+               // Set the expiry date using TokenProvider
+               refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
+               refreshTokenRepository.save(refreshTokenEntity);
+
+               // Generate and set an access token using TokenProvider
+               String accessToken = tokenProvider.generateAccessToken(user.getUid());
+
+               // Create a response object that includes the access token and refresh token
+               Map<String, Object> responseBody = new HashMap<>();
+               responseBody.put("accessToken", accessToken);
+               responseBody.put("refreshToken", refreshToken);
+               responseBody.put("uid", user.getUid());
+
+               return ResponseEntity.ok(responseBody);
+           } else {
+               return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch UID");
+           }
+       } else {
+           // Email doesn't exist, return an unauthorized response
+           return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
+       }
+   } catch (Exception e) {
+       e.printStackTrace();
+       return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+   }
 }
 
-	@CrossOrigin(origins="http://localhost:4200")
-	@PostMapping("/logincheckgmail")
-	public ResponseEntity<?> logincheckgmail(@RequestBody User c12, HttpServletResponse response) {
-	    try {
-	        String checkemail = c12.getUserName();
 
-	        // Check if the email exists in your database
-	        boolean emailExists = checkIfEmailExists(checkemail);
-
-	        if (emailExists) {
-	            // Fetch the user's UID by checking the email
-	            Optional<User> userOptional = Optional.ofNullable(ud.findByUserName(checkemail));
-	            if (userOptional.isPresent()) {
-	                User user = userOptional.get();
-
-	                // Create and set cookies here
-	                Cookie userCookie = new Cookie("user", checkemail);
-	                userCookie.setMaxAge(3600); // Cookie expires in 1 hour (adjust as needed)
-	                userCookie.setPath("/"); // Set the path to match your frontend
-	                response.addCookie(userCookie);
-
-	                // Generate and set a refresh token
-	                String refreshToken = tokenProvider.generateRefreshToken(checkemail);
-	                // Save the refresh token in the database
-	                RefreshToken refreshTokenEntity = new RefreshToken();
-	                refreshTokenEntity.setTokenId(refreshToken);
-	                refreshTokenEntity.setUsername(user.getUid());
-	                // Set the expiry date using TokenProvider
-	                refreshTokenEntity.setExpiryDate(tokenProvider.getExpirationDateFromRefreshToken(refreshToken));
-	                refreshTokenRepository.save(refreshTokenEntity);
-
-	                // Generate and set an access token using TokenProvider
-	                String accessToken = tokenProvider.generateAccessToken(user.getUid());
-
-	                // Create a response object that includes the access token and refresh token
-	                Map<String, Object> responseBody = new HashMap<>();
-	                responseBody.put("accessToken", accessToken);
-	                responseBody.put("refreshToken", refreshToken);
-	                responseBody.put("uid", user.getUid());
-
-	                return ResponseEntity.ok(responseBody);
-	            } else {
-	                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to fetch UID");
-	            }
-	        } else {
-	            // Email doesn't exist, return an unauthorized response
-	            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-	        }
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-	    }
-	}
-
-
-	public boolean checkIfEmailExists(String email) {
-	    // Use the UserRepository to check if the email exists
-	    Optional<User> userOptional = Optional.ofNullable(ud.findByUserName(email));
-	    return userOptional.isPresent(); // If the email exists, this will be true
-	}
+public boolean checkIfEmailExists(String email) {
+   // Use the UserRepository to check if the email exists
+   Optional<User> userOptional = Optional.ofNullable(ud.findByUserName(email));
+   return userOptional.isPresent(); // If the email exists, this will be true
+}
 
 
     // ... Other methods ...
@@ -376,17 +353,17 @@ public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
         // TODO Auto-generated method stub
         List<User> allMails = ud.findAll();
         for (User u1 : allMails) {
-        	 System.out.println("Checking the password"+checkpass);
-        	if (u1.getUserName().equals(checkemail) && u1.getUserPassword().equals(checkpass) && u1.isVerified()) {
-        		  System.out.println("Checking the password"+u1.getUserPassword());
+        System.out.println("Checking the password"+checkpass);
+        if (u1.getUserName().equals(checkemail) && u1.getUserPassword().equals(checkpass) && u1.isVerified()) {
+         System.out.println("Checking the password"+u1.getUserPassword());
                 return u1; // User found, return user details
             }
         }
         return null; // User not found
     }
-	
-    
-    @CrossOrigin(origins="http://localhost:4200")
+
+   
+    @CrossOrigin(origins = "https://job4jobless.com")
     @PostMapping("/verifyUser")
     public ResponseEntity<?> verifyUser(@RequestBody Map<String, String> request) {
         try {
@@ -402,8 +379,8 @@ public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
                 // Save the updated user record
                 ud.save(user);
                 Map<String, Object> response = new HashMap<>();
-	            response.put("status", "User verified successfully");
-	            response.put("employer", user);
+           response.put("status", "User verified successfully");
+           response.put("employer", user);
                 return ResponseEntity.ok(user);
             } else {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User with userName " + userName + " not found.");
@@ -417,8 +394,8 @@ public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
 
 
 
-	
-    @CrossOrigin(origins="http://localhost:4200")
+
+    @CrossOrigin(origins = "https://job4jobless.com")
     @DeleteMapping("/deleteUser/{uid}")
     public ResponseEntity<Object> deleteUserByUid(@PathVariable String uid) {
         try {
@@ -439,7 +416,7 @@ public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred while processing your request: " + e.getMessage());
         }
     }
-    @CrossOrigin(origins="http://localhost:4200")
+    @CrossOrigin(origins = "https://job4jobless.com")
     @PostMapping("/resetPassword")
     public ResponseEntity<Boolean> resetPassword(@RequestBody Map<String, String> request) {
 
@@ -508,8 +485,8 @@ public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
         }
 
     }
-    
-    @CrossOrigin(origins="http://localhost:4200")
+   
+    @CrossOrigin(origins = "https://job4jobless.com")
     @PostMapping("/resetPasswordUser")
     public ResponseEntity<Boolean> resetPasswordUser(@RequestBody Map<String, String> request) {
         try {
@@ -538,8 +515,8 @@ public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
         }
     }
 
-    
-    @CrossOrigin(origins="http://localhost:4200")
+   
+    @CrossOrigin(origins = "https://job4jobless.com")
     @GetMapping("/checkuser")
     public ResponseEntity<Object> checkUser(@RequestParam String userName) {
         try {
@@ -558,19 +535,30 @@ public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
                 .body("{\"message\": \"An error occurred while processing your request.\"}");
         }
     }
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "https://job4jobless.com")
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(@RequestParam String refreshToken) {
-        RefreshToken token = refreshTokenRepository.findByTokenId(refreshToken);
-        if (token != null) {
-            refreshTokenRepository.delete(token);
-            return ResponseEntity.ok("Logout successful");
-        }
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Refresh token not found");
+    public ResponseEntity<String> logout(HttpServletResponse response) {
+    // Delete cookies on the client-side
+        Cookie empCookie = new Cookie("uid", null);
+        empCookie.setMaxAge(0);
+        empCookie.setPath("/"); // Make sure the path matches where the cookie was set
+        response.addCookie(empCookie);
+
+        Cookie accessTokenCookie = new Cookie("accessToken", null);
+        accessTokenCookie.setMaxAge(0);
+        accessTokenCookie.setPath("/"); // Make sure the path matches where the cookie was set
+        response.addCookie(accessTokenCookie);
+
+        Cookie refreshTokenCookie = new Cookie("refreshToken", null);
+        refreshTokenCookie.setMaxAge(0);
+        refreshTokenCookie.setPath("/"); // Make sure the path matches where the cookie was set
+        response.addCookie(refreshTokenCookie);
+
+        return ResponseEntity.ok("Logout successful");
     }
 
 
-    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "https://job4jobless.com")
     @PostMapping("/createOrGetUser")
     public ResponseEntity<Map<String, Object>> createOrGetUser(@RequestBody String userName, HttpServletResponse response) {
         try {
@@ -661,7 +649,7 @@ public ResponseEntity<?> refreshToken(@RequestParam String refreshToken) {
         // Remove hyphens and special symbols
         uuid = uuid.replaceAll("-", "");
         newUser.setUid(uuid);
-        
+       
         // Perform the necessary operations to save the user to your database.
         // You might need to use JPA, Hibernate, or your database's API here.
 

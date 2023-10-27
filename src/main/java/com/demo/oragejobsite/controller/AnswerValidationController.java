@@ -14,7 +14,7 @@ import com.demo.oragejobsite.entity.QuizQuestion;
 import com.demo.oragejobsite.entity.UserAnswer;
 
 @RestController
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins = "https://job4jobless.com")
 public class AnswerValidationController {
 	
 	 private final QuizQuestionRepository quizQuestionRepository;
@@ -24,7 +24,7 @@ public class AnswerValidationController {
 	        this.quizQuestionRepository = quizQuestionRepository;
 	    }
 	    
-	    @CrossOrigin(origins="http://localhost:4200")
+	    @CrossOrigin(origins = "https://job4jobless.com")
     @PostMapping("/checkallanswer")
     public ResponseEntity<Boolean> validateAnswers(@RequestBody List<UserAnswer> userAnswers) {
         // Assuming you have a list of UserAnswer objects representing each question, user answer, and correct answer

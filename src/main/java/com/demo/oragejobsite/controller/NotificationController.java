@@ -1,4 +1,4 @@
-package com.demo.oragejobsite.controller;
+ package com.demo.oragejobsite.controller;
 
 import java.util.List;
 
@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.oragejobsite.dao.NotificationDao;
 import com.demo.oragejobsite.entity.Notification;
 
-@CrossOrigin(origins="http://localhost:4200")
+@CrossOrigin(origins = "https://job4jobless.com")
 @RestController
 public class NotificationController {
 	@Autowired
 	private NotificationDao nd;
 	
 	
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins = "https://job4jobless.com")
 	@PostMapping("/insertnotification")
 	public ResponseEntity<Boolean> insertnotification(@RequestBody Notification nn) {
 	    try {
@@ -42,7 +42,7 @@ public class NotificationController {
 	    }
 	}
 
-	@CrossOrigin(origins="http://localhost:4200")
+	@CrossOrigin(origins = "https://job4jobless.com")
 	@GetMapping("/fetchnotify")
 	public ResponseEntity<List<Notification>> fetchnotify() {
 	    try {

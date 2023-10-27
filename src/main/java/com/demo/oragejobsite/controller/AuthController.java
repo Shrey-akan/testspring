@@ -2,6 +2,7 @@ package com.demo.oragejobsite.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -10,7 +11,7 @@ import com.demo.oragejobsite.entity.RefreshTokenRequest;
 import com.demo.oragejobsite.service.AccessTokenResponse;
 import com.demo.oragejobsite.util.JwtTokenUtil;
 import com.demo.oragejobsite.util.RefreshTokenUtil;
-
+@CrossOrigin(origins = "https://job4jobless.com")
 @RestController
 public class AuthController {
 
@@ -19,7 +20,7 @@ public class AuthController {
 
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
-
+    @CrossOrigin(origins = "https://job4jobless.com")
     @PostMapping("/api/refreshToken")
     public ResponseEntity<AccessTokenResponse> refreshToken(@RequestBody RefreshTokenRequest refreshTokenRequest) {
         String refreshToken = refreshTokenRequest.getRefreshToken();
