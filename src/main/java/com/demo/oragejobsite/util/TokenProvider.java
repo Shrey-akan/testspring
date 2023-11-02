@@ -38,19 +38,20 @@ public class TokenProvider {
     }
     
     
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(String username, String uid) {
         Date expiryDate = new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_TIME);
         String tokenId = UUID.randomUUID().toString();
 
         return Jwts.builder()
             .setSubject(username)
+            .claim("uid", uid)
             .setExpiration(expiryDate)
             .signWith(jwtSecret, SignatureAlgorithm.HS256)
             .setId(tokenId)
             .compact();
     }
 
-    public String validateAndExtractUsernameFromRefreshToken(String token) {
+    public String[] validateAndExtractUsernameAndUidFromRefreshToken(String token) {
         try {
             Claims claims = Jwts.parserBuilder()
                 .setSigningKey(jwtSecret)
@@ -59,12 +60,17 @@ public class TokenProvider {
                 .getBody();
 
             String username = claims.getSubject();
-            return username;
+            String uid = claims.get("uid", String.class); // Extract the 'uid' claim
+
+            if (username != null && uid != null) {
+                return new String[]{username, uid};
+            }
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return null;
     }
+
 
     public String generateAccessToken(String uid) {
         Date expiryDate = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPIRATION_TIME);

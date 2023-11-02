@@ -252,7 +252,11 @@ public ResponseEntity<?> logincheck(@RequestBody User c12, HttpServletResponse r
 
             // Generate and set a refresh token
             // Generate and set a refresh token
-            String refreshToken = tokenProvider.generateRefreshToken(checkemail);
+         // ...
+         // Assuming you have retrieved the user's UID in checkmail.getUid()
+         String refreshToken = tokenProvider.generateRefreshToken(checkemail, checkmail.getUid());
+
+
             // Save the refresh token in the database
             RefreshToken refreshTokenEntity = new RefreshToken();
             refreshTokenEntity.setTokenId(refreshToken);
@@ -307,7 +311,7 @@ public ResponseEntity<?> logincheckgmail(@RequestBody User c12, HttpServletRespo
                response.addCookie(userCookie);
 
                // Generate and set a refresh token
-               String refreshToken = tokenProvider.generateRefreshToken(checkemail);
+               String refreshToken = tokenProvider.generateRefreshToken(checkemail, user.getUid());
                // Save the refresh token in the database
                RefreshToken refreshTokenEntity = new RefreshToken();
                refreshTokenEntity.setTokenId(refreshToken);
@@ -558,10 +562,11 @@ public boolean checkIfEmailExists(String email) {
     }
 
 
-    @CrossOrigin(origins = "https://job4jobless.com")
+    @CrossOrigin(origins = "http://job4jobless.com")
     @PostMapping("/createOrGetUser")
-    public ResponseEntity<Map<String, Object>> createOrGetUser(@RequestBody String userName, HttpServletResponse response) {
+    public ResponseEntity<Map<String, Object>> createOrGetUser(@RequestBody Map<String, String> requestBody, HttpServletResponse response) {
         try {
+            String userName = requestBody.get("userName"); // Get the "userName" from the request body
             // Remove any invalid characters (e.g., CR) from the userName
             userName = userName.replaceAll("[\\p{Cntrl}&&[^\r\n\t]]", "");
 
@@ -573,7 +578,7 @@ public boolean checkIfEmailExists(String email) {
                 String accessToken = jwtTokenUtil.generateToken(existingUser.getUserName());
 
                 // Generate and set a refresh token
-                String refreshToken = tokenProvider.generateRefreshToken(userName);
+                String refreshToken = tokenProvider.generateRefreshToken(userName, existingUser.getUid());
 
                 // Save the refresh token in the database
                 RefreshToken refreshTokenEntity = new RefreshToken();
@@ -600,9 +605,8 @@ public boolean checkIfEmailExists(String email) {
                 // User doesn't exist, create a new user
                 User newUser = createUser(userName, true);
 
-             // Generate and set a refresh token
-                String refreshToken = tokenProvider.generateRefreshToken(userName);
-
+                // Generate and set a refresh token
+                String refreshToken = tokenProvider.generateRefreshToken(userName, newUser.getUid());
 
                 // Save the refresh token in the database
                 RefreshToken refreshTokenEntity = new RefreshToken();
@@ -638,6 +642,7 @@ public boolean checkIfEmailExists(String email) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
         }
     }
+
 
     public User createUser(String userName, boolean verified) {
         User newUser = new User();
